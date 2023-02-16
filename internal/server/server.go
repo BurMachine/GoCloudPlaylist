@@ -32,7 +32,7 @@ func (s PlaylistServer) Run() {
 		errHttp = http.ListenAndServe(s.Conf.AddrHttp, s.Mux)
 		wg.Done()
 	}()
-	s.Logger.Info().Msg("http server starting")
+	s.Logger.Info().Msg("http server start")
 	wg.Wait()
 	if errHttp != nil {
 		s.Logger.Fatal().Err(errHttp).Msg("http server starting error")

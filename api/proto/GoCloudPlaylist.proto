@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+option go_package = "./";
+
+import "google/api/annotations.proto";
+
+package api;
+
+service GoCloudPlaylist {
+  rpc AddSong(AddRequest) returns (PlaylistResponse) {}
+  rpc DeleteSong(SongNameForDelete) returns (PlaylistResponse) {}
+  rpc PlaySong(google.protobuf.Empty) returns (SongProc) {}
+  rpc PauseSong(google.protobuf.Empty) returns (SongProc) {}
+  rpc Next(google.protobuf.Empty) returns (SongProc) {}
+  rpc Prev(google.protobuf.Empty) returns (SongProc) {}
+  rpc Status(google.protobuf.Empty) returns (SongProc) {}
+  rpc Version(google.protobuf.Empty) returns (SongProc) {}
+}
+
+
+message SongProc {
+  string name = 1;
+  string time = 2;
+  string status = 3;
+}
+
+// Сообщения для добавления
+message Song {
+  string name = 1;
+  string duration = 2;
+}
+message PlaylistResponse {
+  repeated Song Playlist = 1;
+}
+message AddRequest {
+  string name = 1;
+  string time = 2;
+}
+
+// Удаление
+message SongNameForDelete {
+  string name = 1;
+}
