@@ -2,10 +2,14 @@ package main
 
 import (
 	"GoCloudPlaylist/internal/config"
+	"GoCloudPlaylist/internal/playlist"
 	PlaylistServer "GoCloudPlaylist/internal/server"
 	"flag"
 	"github.com/rs/zerolog"
+	"log"
 	"os"
+	"sync"
+	"time"
 )
 
 func main() {
@@ -21,11 +25,29 @@ func main() {
 	}
 	serv := PlaylistServer.New()
 	serv.Logger = &logger
+
+	wg := &sync.WaitGroup{}
 	serv.Conf = conf
-	serv.Run()
-	//pl := playlist.Init()
-	//playlist.AddSong("Demolisher", 120, pl)
-	//for e := pl.Front(); e != nil; e = e.Next() {
-	//	fmt.Println(e.Value)
-	//}
+	go func() {
+		wg.Add(1)
+		serv.Run()
+		wg.Done()
+	}()
+
+	pl := playlist.Init()
+	pl.Logger = &logger
+	go func() {
+		wg.Add(1)
+		pl.Run()
+		wg.Done()
+	}()
+	time.Sleep(3 * time.Second)
+	a := pl.Pause()
+	log.Println(a)
+	time.Sleep(5 * time.Second)
+	b := pl.Play()
+	log.Println(a, b)
+
+	wg.Wait()
+	logger.Info().Msg("service exit")
 }

@@ -3,6 +3,11 @@ package playlist
 import (
 	"container/list"
 	_ "container/list"
+	"fmt"
+	"github.com/rs/zerolog"
+	"time"
+
+	"sync"
 )
 
 type Song struct {
@@ -10,12 +15,91 @@ type Song struct {
 	Duration int
 }
 
-func Init() *list.List {
-	return list.New()
+type Playlist struct {
+	list    *list.List
+	current *list.Element
+	mutex   *sync.RWMutex
+
+	playing  bool
+	PlayChan chan struct{}
+	StopChan chan struct{}
+
+	// Каналы ответа
+	RequestChan chan SongProcessing
+
+	Logger *zerolog.Logger
 }
 
-func AddSong(name string, duration int, playlist *list.List) *list.List {
-	song := Song{Name: name, Duration: duration}
-	playlist.PushBack(song)
-	return playlist
+func Init() *Playlist {
+	return &Playlist{
+		list:     list.New(),
+		current:  nil,
+		mutex:    &sync.RWMutex{},
+		playing:  true,
+		PlayChan: make(chan struct{}),
+		StopChan: make(chan struct{}),
+	}
+}
+
+func (pl Playlist) Run() {
+	// Временно
+	pl.list.PushBack(Song{Name: "Run Free", Duration: 222})
+	pl.list.PushBack(Song{Name: "Demolisher", Duration: 123})
+	// Временно
+
+	elem := pl.list.Front()
+	for {
+		if elem == nil {
+			continue
+		}
+		select {
+
+		default:
+			if pl.playing {
+				el, ok := elem.Value.(Song)
+				if !ok {
+					println(123)
+				}
+				for i := 0; i < el.Duration; i++ {
+					select {
+					case <-pl.StopChan:
+						pl.RequestChan <- SongProcessing{name: el.Name, currentTime: i, duration: el.Duration}
+
+						pl.Logger.Info().Msg(fmt.Sprintf("%s paused on %d/%d", el.Name, i, el.Duration))
+						select {
+						case <-pl.PlayChan:
+							pl.RequestChan <- SongProcessing{
+								name:        el.Name,
+								currentTime: i,
+								duration:    el.Duration,
+							}
+							pl.Logger.Info().Msg(fmt.Sprintf("%s continued on %d/%d", el.Name, i, el.Duration))
+						}
+					default:
+						time.Sleep(time.Second)
+					}
+
+				}
+				elem = elem.Next()
+				continue
+			} else {
+				el, ok := elem.Value.(Song)
+				if !ok {
+					println(123)
+				}
+				select {
+				case <-pl.PlayChan:
+					pl.RequestChan <- SongProcessing{
+						name:        el.Name,
+						currentTime: 0,
+						duration:    el.Duration,
+					}
+					pl.Logger.Info().Msg(fmt.Sprintf("%s continued on %d/%d", el.Name, 0, el.Duration))
+					pl.playing = true
+					break
+				}
+				continue
+			}
+		}
+	}
 }
