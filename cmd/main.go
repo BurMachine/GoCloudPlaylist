@@ -45,6 +45,7 @@ func main() {
 
 	time.Sleep(3 * time.Second)
 	pl.Next()
+	time.Sleep(1 * time.Second)
 	a := pl.Pause()
 	time.Sleep(5 * time.Second)
 	b := pl.Play()

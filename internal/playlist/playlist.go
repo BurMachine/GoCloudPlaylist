@@ -15,8 +15,11 @@ type Song struct {
 
 type Playlist struct {
 	list    *list.List
-	current *list.Element
-	mutex   *sync.RWMutex
+	current struct {
+		currentElem *list.Element
+		time        int
+	}
+	mutex *sync.Mutex
 
 	playing  bool
 	PlayChan chan struct{}
@@ -32,9 +35,12 @@ type Playlist struct {
 
 func Init() *Playlist {
 	return &Playlist{
-		list:        list.New(),
-		current:     nil,
-		mutex:       &sync.RWMutex{},
+		list: list.New(),
+		current: struct {
+			currentElem *list.Element
+			time        int
+		}{},
+		mutex:       &sync.Mutex{},
 		playing:     false,
 		PlayChan:    make(chan struct{}),
 		StopChan:    make(chan struct{}),
@@ -44,67 +50,62 @@ func Init() *Playlist {
 	}
 }
 
-func (pl Playlist) Run() {
+func (pl *Playlist) Run() {
 	// Временно
 	pl.list.PushBack(Song{Name: "Run Free", Duration: 10})
 	pl.list.PushBack(Song{Name: "Demolisher", Duration: 11})
 	// Временно
 
-	elem := pl.list.Front()
+	pl.current.currentElem = pl.list.Front()
 	for {
-		if elem == nil {
+		if pl.current.currentElem == nil {
 			println("finished")
-			break // ??
+			break
 		}
-
 		if pl.playing {
-			el, ok := elem.Value.(Song)
+			el, ok := pl.current.currentElem.Value.(Song)
 			if !ok {
 				println(123)
 			}
 			for i := 0; i < el.Duration; i++ {
-				action := pl.playingProc(elem, i)
+				action := pl.playingProc(pl.current.currentElem, i)
 				if action == "next" {
 					break
 				} else if action == "prev" {
 					break
 				} else if i == el.Duration-1 {
-					elem = elem.Next()
+					pl.current.currentElem = pl.current.currentElem.Next()
 					break
 				}
 			}
 			continue
 		} else {
-			pl.pausedProc(elem)
+			pl.pausedProc(pl.current.currentElem)
 			continue
 		}
 	}
 }
 
 func (pl *Playlist) playingProc(elem *list.Element, i int) string {
-	el, _ := elem.Value.(Song)
+
 	select {
 	case <-pl.StopChan:
+		el, _ := elem.Value.(Song)
 		pl.RequestChan <- SongProcessing{name: el.Name, currentTime: i, duration: el.Duration}
-
 		select {
 		case <-pl.PlayChan:
-			pl.RequestChan <- SongProcessing{
-				name:        el.Name,
-				currentTime: i,
-				duration:    el.Duration,
-				exist:       true,
-			}
+			el, _ = elem.Value.(Song)
+			pl.RequestChan <- SongProcessing{name: el.Name, currentTime: i, duration: el.Duration, exist: true}
 			break
 		case <-pl.NextChan:
-			return pl.nextChannelsProc(elem)
+			return pl.nextChannelsProc()
 		case <-pl.PrevChan:
-			return pl.prevChannelsProc(elem)
+			return pl.prevChannelsProc()
 		}
 	case <-pl.NextChan:
-		return pl.nextChannelsProc(elem)
+		return pl.nextChannelsProc()
 	case <-pl.PrevChan:
-		return pl.prevChannelsProc(elem)
+		return pl.prevChannelsProc()
 	default:
 		time.Sleep(time.Second)
 	}
@@ -112,18 +113,19 @@ func (pl *Playlist) playingProc(elem *list.Element, i int) string {
 }
 
 func (pl *Playlist) pausedProc(elem *list.Element) string {
-	el, _ := elem.Value.(Song)
 	select {
 	case <-pl.PlayChan:
+		el, _ := elem.Value.(Song)
 		pl.RequestChan <- SongProcessing{name: el.Name, currentTime: 0, duration: el.Duration}
 		break
 	case <-pl.StopChan:
+		el, _ := elem.Value.(Song)
 		pl.RequestChan <- SongProcessing{name: el.Name, currentTime: 0, duration: el.Duration}
 		break
 	case <-pl.NextChan:
-		return pl.nextChannelsProc(elem)
+		return pl.nextChannelsProc()
 	case <-pl.PrevChan:
-		return pl.prevChannelsProc(elem)
+		return pl.prevChannelsProc()
 	}
 	return ""
 }

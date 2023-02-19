@@ -1,14 +1,11 @@
 package playlist
 
-import "container/list"
-
 // nextChannelsProc - отправка данных в каналы, повторяющийся код
-func (pl *Playlist) nextChannelsProc(elem *list.Element) string {
-	if elem.Next() == nil {
+func (pl *Playlist) nextChannelsProc() string {
+	if pl.current.currentElem == nil {
 		pl.RequestChan <- SongProcessing{exist: false}
 	} else {
-		elem = elem.Next()
-		el, _ := elem.Value.(Song)
+		el, _ := pl.current.currentElem.Value.(Song)
 		pl.RequestChan <- SongProcessing{name: el.Name, currentTime: 0, duration: el.Duration, exist: true}
 
 		return "next"
@@ -17,12 +14,11 @@ func (pl *Playlist) nextChannelsProc(elem *list.Element) string {
 }
 
 // prevChannelsProc - отправка данных в каналы, повторяющийся код
-func (pl *Playlist) prevChannelsProc(elem *list.Element) string {
-	if elem.Prev() == nil {
+func (pl *Playlist) prevChannelsProc() string {
+	if pl.current.currentElem == nil {
 		pl.RequestChan <- SongProcessing{exist: false}
 	} else {
-		elem = elem.Prev()
-		el, _ := elem.Value.(Song)
+		el, _ := pl.current.currentElem.Value.(Song)
 		pl.RequestChan <- SongProcessing{name: el.Name, currentTime: 0, duration: el.Duration, exist: true}
 
 		return "prev"
