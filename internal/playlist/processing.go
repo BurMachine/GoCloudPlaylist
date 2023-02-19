@@ -23,7 +23,7 @@ func (pl *Playlist) Play() SongProcessing {
 
 func (pl Playlist) Pause() SongProcessing {
 	var data SongProcessing
-	pl.mutex.Lock()
+	pl.mutex.RLock()
 	pl.StopChan <- struct{}{}
 	select {
 	case data = <-pl.RequestChan:
