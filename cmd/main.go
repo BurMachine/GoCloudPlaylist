@@ -6,7 +6,6 @@ import (
 	PlaylistServer "GoCloudPlaylist/internal/server"
 	"flag"
 	"github.com/rs/zerolog"
-	"log"
 	"os"
 	"sync"
 	"time"
@@ -44,14 +43,9 @@ func main() {
 	//time.Sleep(15 * time.Second)
 
 	time.Sleep(3 * time.Second)
-	pl.Next()
-	time.Sleep(1 * time.Second)
-	a := pl.Pause()
-	time.Sleep(5 * time.Second)
-	b := pl.Play()
-	pl.Prev()
-	pl.Next()
-	log.Println(a, b)
+	pl.Play()
+	time.Sleep(9 * time.Second)
+	pl.Status()
 
 	wg.Wait()
 	logger.Info().Msg("service exit")
