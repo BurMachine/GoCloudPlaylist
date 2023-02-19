@@ -104,7 +104,7 @@ func (pl *Playlist) playingProc(i int) string {
 		case <-pl.PrevChan:
 			return pl.prevChannelsProc()
 		case <-pl.StatusChan:
-			pl.RequestChan <- SongProcessing{name: el.Name, duration: el.Duration, currentTime: i}
+			pl.RequestChan <- SongProcessing{name: el.Name, duration: el.Duration, currentTime: i, playing: false}
 		}
 	case <-pl.NextChan:
 		return pl.nextChannelsProc()
@@ -112,7 +112,7 @@ func (pl *Playlist) playingProc(i int) string {
 		return pl.prevChannelsProc()
 	case <-pl.StatusChan:
 		el, _ := pl.current.currentElem.Value.(Song)
-		pl.RequestChan <- SongProcessing{name: el.Name, duration: el.Duration, currentTime: i}
+		pl.RequestChan <- SongProcessing{name: el.Name, duration: el.Duration, currentTime: i, playing: true}
 	default:
 		time.Sleep(time.Second)
 	}
@@ -136,7 +136,7 @@ func (pl *Playlist) pausedProc() string {
 		return pl.prevChannelsProc()
 	case <-pl.StatusChan:
 		el, _ := pl.current.currentElem.Value.(Song)
-		pl.RequestChan <- SongProcessing{name: el.Name, duration: el.Duration, currentTime: 0}
+		pl.RequestChan <- SongProcessing{name: el.Name, duration: el.Duration, currentTime: 0, playing: false}
 		break
 	}
 	return ""

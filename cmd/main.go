@@ -5,6 +5,7 @@ import (
 	"GoCloudPlaylist/internal/playlist"
 	PlaylistServer "GoCloudPlaylist/internal/server"
 	"flag"
+	"fmt"
 	"github.com/rs/zerolog"
 	"os"
 	"sync"
@@ -44,7 +45,23 @@ func main() {
 
 	time.Sleep(3 * time.Second)
 	pl.Play()
-	time.Sleep(9 * time.Second)
+	pl.AddNewSong(playlist.Song{Name: "Kingslayer", Duration: 12})
+	l, err := pl.GetList()
+	if err != nil {
+		println("((((")
+	}
+	fmt.Println(l)
+	time.Sleep(5 * time.Second)
+	err = pl.DeleteSong("Kingslayer")
+	if err != nil {
+		println("((((1")
+	}
+	time.Sleep(2 * time.Second)
+	l, err = pl.GetList()
+	if err != nil {
+		println("((((")
+	}
+	fmt.Println(l)
 	pl.Status()
 
 	wg.Wait()
