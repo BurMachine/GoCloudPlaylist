@@ -42,12 +42,14 @@ func main() {
 		wg.Done()
 	}()
 	//time.Sleep(15 * time.Second)
-	a := pl.Pause()
+
 	time.Sleep(3 * time.Second)
 	pl.Next()
-
+	a := pl.Pause()
 	time.Sleep(5 * time.Second)
 	b := pl.Play()
+	pl.Prev()
+	pl.Next()
 	log.Println(a, b)
 
 	wg.Wait()

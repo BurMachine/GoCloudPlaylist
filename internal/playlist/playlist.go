@@ -3,7 +3,6 @@ package playlist
 import (
 	"container/list"
 	_ "container/list"
-	"fmt"
 	"github.com/rs/zerolog"
 	"sync"
 	"time"
@@ -36,7 +35,7 @@ func Init() *Playlist {
 		list:        list.New(),
 		current:     nil,
 		mutex:       &sync.RWMutex{},
-		playing:     true,
+		playing:     false,
 		PlayChan:    make(chan struct{}),
 		StopChan:    make(chan struct{}),
 		NextChan:    make(chan struct{}),
@@ -54,7 +53,8 @@ func (pl Playlist) Run() {
 	elem := pl.list.Front()
 	for {
 		if elem == nil {
-			continue // ??
+			println("finished")
+			break // ??
 		}
 
 		if pl.playing {
@@ -67,20 +67,20 @@ func (pl Playlist) Run() {
 				if action == "next" {
 					break
 				} else if action == "prev" {
-
+					break
+				} else if i == el.Duration-1 {
+					elem = elem.Next()
+					break
 				}
 			}
-			elem = elem.Next()
 			continue
 		} else {
 			el, ok := elem.Value.(Song)
 			if !ok {
 				println(123)
 			}
-			action := pl.pausedProc(elem, el)
-			if action == "next" {
-				elem = elem.Next()
-			}
+			pl.pausedProc(elem, el)
+
 			continue
 		}
 	}
@@ -99,13 +99,16 @@ func (pl *Playlist) playingProc(elem *list.Element, el Song, i int) string {
 				duration:    el.Duration,
 				exist:       true,
 			}
-			pl.Logger.Info().Msg(fmt.Sprintf("%s continued on %d/%d", el.Name, i, el.Duration))
 			break
 		case <-pl.NextChan:
 			return pl.nextChannelsProc(elem)
+		case <-pl.PrevChan:
+			return pl.prevChannelsProc(elem)
 		}
 	case <-pl.NextChan:
 		return pl.nextChannelsProc(elem)
+	case <-pl.PrevChan:
+		return pl.prevChannelsProc(elem)
 	default:
 		time.Sleep(time.Second)
 	}
@@ -115,16 +118,15 @@ func (pl *Playlist) playingProc(elem *list.Element, el Song, i int) string {
 func (pl *Playlist) pausedProc(elem *list.Element, el Song) string {
 	select {
 	case <-pl.PlayChan:
-		pl.RequestChan <- SongProcessing{
-			name:        el.Name,
-			currentTime: 0,
-			duration:    el.Duration,
-		}
-		pl.Logger.Info().Msg(fmt.Sprintf("%s continued on %d/%d", el.Name, 0, el.Duration))
-		pl.playing = true
+		pl.RequestChan <- SongProcessing{name: el.Name, currentTime: 0, duration: el.Duration}
+		break
+	case <-pl.StopChan:
+		pl.RequestChan <- SongProcessing{name: el.Name, currentTime: 0, duration: el.Duration}
 		break
 	case <-pl.NextChan:
 		return pl.nextChannelsProc(elem)
+	case <-pl.PrevChan:
+		return pl.prevChannelsProc(elem)
 	}
 	return ""
 }
