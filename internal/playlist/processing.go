@@ -22,7 +22,7 @@ func (pl *Playlist) Play() SongProcessing {
 	return data
 }
 
-func (pl Playlist) Pause() SongProcessing {
+func (pl *Playlist) Pause() SongProcessing {
 	var data SongProcessing
 	pl.mutex.RLock()
 	pl.StopChan <- struct{}{}
