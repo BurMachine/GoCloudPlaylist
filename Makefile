@@ -10,7 +10,7 @@ rm_containers:
 	docker compose down
 	docker rmi gocloudplaylist_api
 	docker rmi dpage/pgadmin4
-	docker rmi postgresContainerForPlaylistService
+	#docker rmi postgresContainerForPlaylistService
 
 restart:
 	docker compose down
