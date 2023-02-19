@@ -52,7 +52,7 @@ func main() {
 	}
 	fmt.Println(l)
 	time.Sleep(5 * time.Second)
-	err = pl.DeleteSong("Kingslayer")
+	err = pl.DeleteSong("Run Free")
 	if err != nil {
 		println("((((1")
 	}

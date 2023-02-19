@@ -132,7 +132,7 @@ func (pl *Playlist) DeleteSong(name string) error {
 		}
 		if tmp.Name == name {
 			if name == el.Name {
-				if !data.playing {
+				if data.playing {
 					return errors.New("can't delete song while playing")
 				}
 				pl.list.Remove(e)
