@@ -41,8 +41,11 @@ func main() {
 		pl.Run()
 		wg.Done()
 	}()
-	time.Sleep(15 * time.Second)
+	//time.Sleep(15 * time.Second)
 	a := pl.Pause()
+	time.Sleep(3 * time.Second)
+	pl.Next()
+
 	time.Sleep(5 * time.Second)
 	b := pl.Play()
 	log.Println(a, b)
