@@ -7,10 +7,10 @@ func (pl *Playlist) nextChannelsProc(elem *list.Element) string {
 	if elem.Next() == nil {
 		pl.RequestChan <- SongProcessing{exist: false}
 	} else {
-		newElem := elem.Next()
-		el, _ := newElem.Value.(Song)
-		pl.RequestChan <- SongProcessing{name: el.Name, currentTime: 0, duration: el.Duration, exist: true}
 		elem = elem.Next()
+		el, _ := elem.Value.(Song)
+		pl.RequestChan <- SongProcessing{name: el.Name, currentTime: 0, duration: el.Duration, exist: true}
+
 		return "next"
 	}
 	return ""
@@ -21,10 +21,10 @@ func (pl *Playlist) prevChannelsProc(elem *list.Element) string {
 	if elem.Prev() == nil {
 		pl.RequestChan <- SongProcessing{exist: false}
 	} else {
-		newElem := elem.Prev()
-		el, _ := newElem.Value.(Song)
-		pl.RequestChan <- SongProcessing{name: el.Name, currentTime: 0, duration: el.Duration, exist: true}
 		elem = elem.Prev()
+		el, _ := elem.Value.(Song)
+		pl.RequestChan <- SongProcessing{name: el.Name, currentTime: 0, duration: el.Duration, exist: true}
+
 		return "prev"
 	}
 	return ""

@@ -19,6 +19,7 @@ func (pl *Playlist) Play() SongProcessing {
 	}
 	pl.playing = true
 	pl.mutex.RUnlock()
+	pl.Logger.Info().Msg(fmt.Sprintf("playing %v ", data))
 	return data
 }
 

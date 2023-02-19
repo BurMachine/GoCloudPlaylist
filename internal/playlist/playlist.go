@@ -63,7 +63,7 @@ func (pl Playlist) Run() {
 				println(123)
 			}
 			for i := 0; i < el.Duration; i++ {
-				action := pl.playingProc(elem, el, i)
+				action := pl.playingProc(elem, i)
 				if action == "next" {
 					break
 				} else if action == "prev" {
@@ -75,18 +75,14 @@ func (pl Playlist) Run() {
 			}
 			continue
 		} else {
-			el, ok := elem.Value.(Song)
-			if !ok {
-				println(123)
-			}
-			pl.pausedProc(elem, el)
-
+			pl.pausedProc(elem)
 			continue
 		}
 	}
 }
 
-func (pl *Playlist) playingProc(elem *list.Element, el Song, i int) string {
+func (pl *Playlist) playingProc(elem *list.Element, i int) string {
+	el, _ := elem.Value.(Song)
 	select {
 	case <-pl.StopChan:
 		pl.RequestChan <- SongProcessing{name: el.Name, currentTime: i, duration: el.Duration}
@@ -115,7 +111,8 @@ func (pl *Playlist) playingProc(elem *list.Element, el Song, i int) string {
 	return ""
 }
 
-func (pl *Playlist) pausedProc(elem *list.Element, el Song) string {
+func (pl *Playlist) pausedProc(elem *list.Element) string {
+	el, _ := elem.Value.(Song)
 	select {
 	case <-pl.PlayChan:
 		pl.RequestChan <- SongProcessing{name: el.Name, currentTime: 0, duration: el.Duration}
