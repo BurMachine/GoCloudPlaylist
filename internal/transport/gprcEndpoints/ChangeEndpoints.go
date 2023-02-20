@@ -40,10 +40,11 @@ func (s *GrpcEndpoints) AddSong(ctx context.Context, req *api.AddRequest) (*api.
 }
 
 func (s *GrpcEndpoints) DeleteSong(ctx context.Context, req *api.SongNameForDelete) (*api.PlaylistResponse, error) {
+	var res api.PlaylistResponse
 	err := s.Pl.DeleteSong(req.Name)
 	if err != nil {
 		s.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("song deleting error")
-		return nil, err
+		return &res, err
 	}
 
 	list, err := s.Pl.GetList()
@@ -51,7 +52,7 @@ func (s *GrpcEndpoints) DeleteSong(ctx context.Context, req *api.SongNameForDele
 		s.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("playlist getting error in DeleteSong")
 		return nil, err
 	}
-	var res api.PlaylistResponse
+
 	for _, song := range list {
 		dur := timeConverting.ConvertFromSecondsToString(song.Duration)
 		songRes := api.Song{
