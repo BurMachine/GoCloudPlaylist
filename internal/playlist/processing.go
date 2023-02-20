@@ -42,8 +42,13 @@ func (pl *Playlist) Pause() SongProcessing {
 func (pl *Playlist) Next() SongProcessing {
 	var data SongProcessing
 	pl.mutex.RLock()
-	pl.current.currentElem = pl.current.currentElem.Next()
-	pl.NextChan <- struct{}{}
+	if pl.current.currentElem.Next() == nil {
+		pl.NextChan <- false
+	} else {
+		pl.current.currentElem = pl.current.currentElem.Next()
+		pl.NextChan <- true
+	}
+
 	select {
 	case data = <-pl.RequestChan:
 		break
@@ -55,8 +60,14 @@ func (pl *Playlist) Next() SongProcessing {
 func (pl *Playlist) Prev() SongProcessing {
 	var data SongProcessing
 	pl.mutex.RLock()
-	pl.current.currentElem = pl.current.currentElem.Prev()
-	pl.PrevChan <- struct{}{}
+
+	if pl.current.currentElem.Prev() == nil {
+		pl.PrevChan <- false
+	} else {
+		pl.current.currentElem = pl.current.currentElem.Prev()
+		pl.PrevChan <- true
+	}
+
 	select {
 	case data = <-pl.RequestChan:
 		break

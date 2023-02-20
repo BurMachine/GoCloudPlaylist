@@ -24,8 +24,8 @@ type Playlist struct {
 	playing    bool
 	PlayChan   chan struct{}
 	StopChan   chan struct{}
-	NextChan   chan struct{}
-	PrevChan   chan struct{}
+	NextChan   chan bool
+	PrevChan   chan bool
 	StatusChan chan struct{}
 
 	// Каналы ответа
@@ -45,8 +45,8 @@ func Init() *Playlist {
 		playing:     false,
 		PlayChan:    make(chan struct{}),
 		StopChan:    make(chan struct{}),
-		NextChan:    make(chan struct{}),
-		PrevChan:    make(chan struct{}),
+		NextChan:    make(chan bool),
+		PrevChan:    make(chan bool),
 		StatusChan:  make(chan struct{}),
 		RequestChan: make(chan SongProcessing),
 	}
@@ -99,17 +99,37 @@ func (pl *Playlist) playingProc(i int) string {
 			el, _ = pl.current.currentElem.Value.(Song)
 			pl.RequestChan <- SongProcessing{Name: el.Name, CurrentTime: i, Duration: el.Duration, Exist: true}
 			break
-		case <-pl.NextChan:
-			return pl.nextChannelsProc()
-		case <-pl.PrevChan:
-			return pl.prevChannelsProc()
+		case data := <-pl.NextChan:
+			if data {
+				return pl.nextChannelsProc()
+			} else {
+				pl.RequestChan <- SongProcessing{Exist: false}
+				return "next"
+			}
+		case data := <-pl.PrevChan:
+			if data {
+				return pl.prevChannelsProc()
+			} else {
+				pl.RequestChan <- SongProcessing{Exist: false}
+				return "next"
+			}
 		case <-pl.StatusChan:
 			pl.RequestChan <- SongProcessing{Name: el.Name, Duration: el.Duration, CurrentTime: i, Playing: false}
 		}
-	case <-pl.NextChan:
-		return pl.nextChannelsProc()
-	case <-pl.PrevChan:
-		return pl.prevChannelsProc()
+	case data := <-pl.NextChan:
+		if data {
+			return pl.nextChannelsProc()
+		} else {
+			pl.RequestChan <- SongProcessing{Exist: false}
+			return "next"
+		}
+	case data := <-pl.PrevChan:
+		if data {
+			return pl.prevChannelsProc()
+		} else {
+			pl.RequestChan <- SongProcessing{Exist: false}
+			return "next"
+		}
 	case <-pl.StatusChan:
 		el, _ := pl.current.currentElem.Value.(Song)
 		pl.RequestChan <- SongProcessing{Name: el.Name, Duration: el.Duration, CurrentTime: i, Playing: true}
@@ -130,10 +150,20 @@ func (pl *Playlist) pausedProc() string {
 		el, _ := pl.current.currentElem.Value.(Song)
 		pl.RequestChan <- SongProcessing{Name: el.Name, CurrentTime: 0, Duration: el.Duration}
 		break
-	case <-pl.NextChan:
-		return pl.nextChannelsProc()
-	case <-pl.PrevChan:
-		return pl.prevChannelsProc()
+	case data := <-pl.NextChan:
+		if data {
+			return pl.nextChannelsProc()
+		} else {
+			pl.RequestChan <- SongProcessing{Exist: false}
+			return "next"
+		}
+	case data := <-pl.PrevChan:
+		if data {
+			return pl.prevChannelsProc()
+		} else {
+			pl.RequestChan <- SongProcessing{Exist: false}
+			return "next"
+		}
 	case <-pl.StatusChan:
 		el, _ := pl.current.currentElem.Value.(Song)
 		pl.RequestChan <- SongProcessing{Name: el.Name, Duration: el.Duration, CurrentTime: 0, Playing: false}
