@@ -145,7 +145,9 @@ func (pl *Playlist) DeleteSong(name string) error {
 				pl.list.Remove(e)
 				break
 			}
-
+		}
+		if e.Next() == nil && tmp.Name != name {
+			return errors.New("song does not exist in playlist")
 		}
 	}
 
