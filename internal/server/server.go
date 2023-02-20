@@ -16,28 +16,24 @@ import (
 )
 
 type PlaylistServer struct {
-	Mux    *gorilla.Router
-	Logger *zerolog.Logger
-	Conf   *config.Conf
-
+	Mux           *gorilla.Router
+	Logger        *zerolog.Logger
+	Conf          *config.Conf
+	HttpHandlers  *httpHandlers.HttpHandlers
 	GrpcEndpoints *gprcEndpoints.GrpcEndpoints
 }
 
 func New(pl *playlist.Playlist) *PlaylistServer {
-	return &PlaylistServer{Mux: gorilla.NewRouter(), GrpcEndpoints: &gprcEndpoints.GrpcEndpoints{
-		Pl: pl,
-	}}
+	return &PlaylistServer{Mux: gorilla.NewRouter(), GrpcEndpoints: &gprcEndpoints.GrpcEndpoints{Pl: pl},
+		HttpHandlers: &httpHandlers.HttpHandlers{Pl: pl}}
 }
 
 func (s PlaylistServer) Run() {
 	// HTTP
 	var errHttp error
 	wg := &sync.WaitGroup{}
-	httpH := &httpHandlers.HttpHandlers{
-		Logger: s.Logger,
-		Mux:    s.Mux,
-	}
-	httpH.Register()
+	s.HttpHandlers.Mux = s.Mux
+	s.HttpHandlers.Register()
 	go func() {
 		wg.Add(1)
 		errHttp = http.ListenAndServe(s.Conf.AddrHttp, s.Mux)

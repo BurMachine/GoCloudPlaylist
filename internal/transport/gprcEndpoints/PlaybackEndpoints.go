@@ -10,7 +10,7 @@ import (
 func (s *GrpcEndpoints) PlaySong(ctx context.Context, req *api.Empty) (*api.SongProc, error) {
 	songProc := s.Pl.Play()
 	timeString := timeConverting.ConvertFromSongProcToString(songProc)
-	s.Pl.Logger.Info().Msg(fmt.Sprintf("Playing %v at %s", songProc, timeString))
+	s.Pl.Logger.Info().Msg(fmt.Sprintf("playing %v at %s", songProc, timeString))
 	return &api.SongProc{
 		Name:   songProc.Name,
 		Time:   timeConverting.ConvertFromSecondsToString(songProc.Duration),
@@ -56,7 +56,6 @@ func (s *GrpcEndpoints) Prev(ctx context.Context, req *api.Empty) (*api.SongProc
 		status = fmt.Sprintf("Switched to previous song: %s", songProc.Name)
 	} else {
 		status = "The previous song does not exist, so you are at the beginning of the playlist."
-		s.Pl.Next()
 	}
 	return &api.SongProc{
 		Name:   songProc.Name,
@@ -71,7 +70,7 @@ func (s *GrpcEndpoints) Status(ctx context.Context, req *api.Empty) (*api.SongPr
 	s.Pl.Logger.Info().Msg(fmt.Sprintf("status song: [%v] at %s(playing: %v)", songProc, timeString, songProc.Playing))
 	var status string
 	if songProc.Playing {
-		status = fmt.Sprintf("Playback status: %s Playing on %s", songProc.Name, timeString)
+		status = fmt.Sprintf("Playback status: %s playing on %s", songProc.Name, timeString)
 	} else {
 		status = fmt.Sprintf("Playback status: %s paused on %s", songProc.Name, timeString)
 	}

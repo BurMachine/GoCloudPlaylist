@@ -97,8 +97,10 @@ func (pl *Playlist) playingProc(i int) string {
 		select {
 		case <-pl.PlayChan:
 			el, _ = pl.current.currentElem.Value.(Song)
-			pl.RequestChan <- SongProcessing{Name: el.Name, CurrentTime: i, Duration: el.Duration, Exist: true}
+			pl.RequestChan <- SongProcessing{Name: el.Name, CurrentTime: i, Duration: el.Duration, Exist: true, Playing: true}
 			break
+		case <-pl.StopChan:
+			pl.RequestChan <- SongProcessing{Name: el.Name, CurrentTime: i, Duration: el.Duration, Exist: true, Playing: true}
 		case data := <-pl.NextChan:
 			if data {
 				return pl.nextChannelsProc()
@@ -116,6 +118,9 @@ func (pl *Playlist) playingProc(i int) string {
 		case <-pl.StatusChan:
 			pl.RequestChan <- SongProcessing{Name: el.Name, Duration: el.Duration, CurrentTime: i, Playing: false}
 		}
+	case <-pl.PlayChan:
+		el, _ := pl.current.currentElem.Value.(Song)
+		pl.RequestChan <- SongProcessing{Name: el.Name, CurrentTime: i, Duration: el.Duration, Exist: true, Playing: true}
 	case data := <-pl.NextChan:
 		if data {
 			return pl.nextChannelsProc()
@@ -143,12 +148,12 @@ func (pl *Playlist) pausedProc() string {
 	select {
 	case <-pl.PlayChan:
 		el, _ := pl.current.currentElem.Value.(Song)
-		pl.RequestChan <- SongProcessing{Name: el.Name, CurrentTime: 0, Duration: el.Duration}
+		pl.RequestChan <- SongProcessing{Name: el.Name, CurrentTime: 0, Duration: el.Duration, Exist: true, Playing: true}
 		pl.playing = true
 		break
 	case <-pl.StopChan:
 		el, _ := pl.current.currentElem.Value.(Song)
-		pl.RequestChan <- SongProcessing{Name: el.Name, CurrentTime: 0, Duration: el.Duration}
+		pl.RequestChan <- SongProcessing{Name: el.Name, CurrentTime: 0, Duration: el.Duration, Exist: true, Playing: true}
 		break
 	case data := <-pl.NextChan:
 		if data {
