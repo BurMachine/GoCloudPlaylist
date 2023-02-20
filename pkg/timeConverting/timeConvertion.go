@@ -19,3 +19,11 @@ func ConvertFromSecondsToString(seconds int) string {
 	Seconds := int(duration.Seconds()) % 60
 	return fmt.Sprintf("%02d:%02d:%02d", Hours, Minutes, Seconds)
 }
+
+func ParseTimeToSeconds(timeStr string) (int, error) {
+	t, err := time.Parse("15:04:05", timeStr)
+	if err != nil {
+		return 0, err
+	}
+	return t.Hour()*3600 + t.Minute()*60 + t.Second(), nil
+}
