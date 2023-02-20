@@ -5,7 +5,6 @@ import (
 	"GoCloudPlaylist/internal/playlist"
 	PlaylistServer "GoCloudPlaylist/internal/server"
 	"flag"
-	"fmt"
 	"github.com/rs/zerolog"
 	"os"
 	"sync"
@@ -23,7 +22,12 @@ func main() {
 	if err != nil {
 		logger.Fatal().Err(err).Msg("config loading error")
 	}
-	serv := PlaylistServer.New()
+
+	// Инициализация плейлиста
+	pl := playlist.Init()
+	pl.Logger = &logger
+
+	serv := PlaylistServer.New(pl)
 	serv.Logger = &logger
 
 	wg := &sync.WaitGroup{}
@@ -34,8 +38,6 @@ func main() {
 		wg.Done()
 	}()
 
-	pl := playlist.Init()
-	pl.Logger = &logger
 	go func() {
 		wg.Add(1)
 		pl.Run()
@@ -44,25 +46,25 @@ func main() {
 	//time.Sleep(15 * time.Second)
 
 	time.Sleep(3 * time.Second)
-	pl.Play()
+	//pl.Play()
 	pl.AddNewSong(playlist.Song{Name: "Kingslayer", Duration: 12})
-	l, err := pl.GetList()
-	if err != nil {
-		println("((((")
-	}
-	fmt.Println(l)
-	time.Sleep(5 * time.Second)
-	err = pl.DeleteSong("Run Free")
-	if err != nil {
-		println("((((1")
-	}
-	time.Sleep(2 * time.Second)
-	l, err = pl.GetList()
-	if err != nil {
-		println("((((")
-	}
-	fmt.Println(l)
-	pl.Status()
+	//l, err := pl.GetList()
+	//if err != nil {
+	//	println("((((")
+	//}
+	//fmt.Println(l)
+	//time.Sleep(5 * time.Second)
+	//err = pl.DeleteSong("Run Free")
+	//if err != nil {
+	//	println("((((1")
+	//}
+	//time.Sleep(2 * time.Second)
+	//l, err = pl.GetList()
+	//if err != nil {
+	//	println("((((")
+	//}
+	//fmt.Println(l)
+	//pl.Status()
 
 	wg.Wait()
 	logger.Info().Msg("service exit")

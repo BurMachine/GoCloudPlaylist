@@ -2,16 +2,15 @@ package playlist
 
 import (
 	"errors"
-	"fmt"
 )
 
 type SongProcessing struct {
-	name        string
-	currentTime int
-	duration    int
+	Name        string
+	CurrentTime int
+	Duration    int
 
-	playing bool
-	exist   bool
+	Playing bool
+	Exist   bool
 }
 
 func (pl *Playlist) Play() SongProcessing {
@@ -24,7 +23,6 @@ func (pl *Playlist) Play() SongProcessing {
 	}
 	pl.playing = true
 	pl.mutex.RUnlock()
-	pl.Logger.Info().Msg(fmt.Sprintf("playing %v ", data))
 	return data
 }
 
@@ -38,7 +36,6 @@ func (pl *Playlist) Pause() SongProcessing {
 	}
 	pl.playing = false
 	pl.mutex.RUnlock()
-	pl.Logger.Info().Msg(fmt.Sprintf("paused %v ", data))
 	return data
 }
 
@@ -52,7 +49,6 @@ func (pl *Playlist) Next() SongProcessing {
 		break
 	}
 	pl.mutex.RUnlock()
-	pl.Logger.Info().Msg(fmt.Sprintf("next %v ", data))
 	return data
 }
 
@@ -66,7 +62,6 @@ func (pl *Playlist) Prev() SongProcessing {
 		break
 	}
 	pl.mutex.RUnlock()
-	pl.Logger.Info().Msg(fmt.Sprintf("prev %v ", data))
 	return data
 }
 
@@ -79,7 +74,6 @@ func (pl *Playlist) Status() SongProcessing {
 		break
 	}
 	pl.mutex.RUnlock()
-	pl.Logger.Info().Msg(fmt.Sprintf("status %v ", data))
 	return data
 }
 
@@ -92,7 +86,6 @@ func (pl *Playlist) AddNewSong(song Song) bool {
 	if el == nil {
 		return false
 	}
-	pl.Logger.Info().Msg(fmt.Sprintf("added %v ", song))
 	return true
 }
 
@@ -132,15 +125,13 @@ func (pl *Playlist) DeleteSong(name string) error {
 		}
 		if tmp.Name == name {
 			if name == el.Name {
-				if data.playing {
+				if data.Playing {
 					return errors.New("can't delete song while playing")
 				}
 				pl.list.Remove(e)
-				pl.Logger.Info().Msg(fmt.Sprintf("deleted %v ", tmp))
 				break
 			} else {
 				pl.list.Remove(e)
-				pl.Logger.Info().Msg(fmt.Sprintf("deleted %v ", tmp))
 				break
 			}
 
