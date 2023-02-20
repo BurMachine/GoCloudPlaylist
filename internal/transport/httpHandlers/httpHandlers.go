@@ -17,4 +17,5 @@ func (h *HttpHandlers) Register() {
 	h.Mux.HandleFunc("/next_song", h.NextSong).Methods(http.MethodGet)
 	h.Mux.HandleFunc("/prev_song", h.PrevSong).Methods(http.MethodGet)
 	h.Mux.HandleFunc("/status", h.Status).Methods(http.MethodGet)
+	h.Mux.HandleFunc("/add_song", h.AddSong).Methods(http.MethodPost)
 }
