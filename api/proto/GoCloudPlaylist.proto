@@ -16,10 +16,6 @@ service GoCloudPlaylist {
   rpc Next(Empty) returns (SongProc) {}
   rpc Prev(Empty) returns (SongProc) {}
   rpc Status(Empty) returns (SongProc) {}
-
-  // Персистентность данных
-  rpc VersionGet(VersionRequest) returns (PlaylistResponse) {}
-  rpc UploadVersionToPlaylist(VersionRequest) returns (PlaylistResponse) {}
 }
 
 
@@ -47,10 +43,6 @@ message SongNameForDelete {
   string name = 1;
 }
 
-// Версия
-message  VersionRequest{
-  int32 id = 1;
-}
 
 // Пустой запрос
 message Empty {

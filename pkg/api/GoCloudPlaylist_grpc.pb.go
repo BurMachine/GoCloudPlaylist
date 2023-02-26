@@ -31,9 +31,6 @@ type GoCloudPlaylistClient interface {
 	Next(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SongProc, error)
 	Prev(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SongProc, error)
 	Status(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SongProc, error)
-	// Персистентность данных
-	VersionGet(ctx context.Context, in *VersionRequest, opts ...grpc.CallOption) (*PlaylistResponse, error)
-	UploadVersionToPlaylist(ctx context.Context, in *VersionRequest, opts ...grpc.CallOption) (*PlaylistResponse, error)
 }
 
 type goCloudPlaylistClient struct {
@@ -107,24 +104,6 @@ func (c *goCloudPlaylistClient) Status(ctx context.Context, in *Empty, opts ...g
 	return out, nil
 }
 
-func (c *goCloudPlaylistClient) VersionGet(ctx context.Context, in *VersionRequest, opts ...grpc.CallOption) (*PlaylistResponse, error) {
-	out := new(PlaylistResponse)
-	err := c.cc.Invoke(ctx, "/api.GoCloudPlaylist/VersionGet", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *goCloudPlaylistClient) UploadVersionToPlaylist(ctx context.Context, in *VersionRequest, opts ...grpc.CallOption) (*PlaylistResponse, error) {
-	out := new(PlaylistResponse)
-	err := c.cc.Invoke(ctx, "/api.GoCloudPlaylist/UploadVersionToPlaylist", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // GoCloudPlaylistServer is the server API for GoCloudPlaylist service.
 // All implementations must embed UnimplementedGoCloudPlaylistServer
 // for forward compatibility
@@ -138,9 +117,6 @@ type GoCloudPlaylistServer interface {
 	Next(context.Context, *Empty) (*SongProc, error)
 	Prev(context.Context, *Empty) (*SongProc, error)
 	Status(context.Context, *Empty) (*SongProc, error)
-	// Персистентность данных
-	VersionGet(context.Context, *VersionRequest) (*PlaylistResponse, error)
-	UploadVersionToPlaylist(context.Context, *VersionRequest) (*PlaylistResponse, error)
 	mustEmbedUnimplementedGoCloudPlaylistServer()
 }
 
@@ -168,12 +144,6 @@ func (UnimplementedGoCloudPlaylistServer) Prev(context.Context, *Empty) (*SongPr
 }
 func (UnimplementedGoCloudPlaylistServer) Status(context.Context, *Empty) (*SongProc, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Status not implemented")
-}
-func (UnimplementedGoCloudPlaylistServer) VersionGet(context.Context, *VersionRequest) (*PlaylistResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method VersionGet not implemented")
-}
-func (UnimplementedGoCloudPlaylistServer) UploadVersionToPlaylist(context.Context, *VersionRequest) (*PlaylistResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UploadVersionToPlaylist not implemented")
 }
 func (UnimplementedGoCloudPlaylistServer) mustEmbedUnimplementedGoCloudPlaylistServer() {}
 
@@ -314,42 +284,6 @@ func _GoCloudPlaylist_Status_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GoCloudPlaylist_VersionGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(VersionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GoCloudPlaylistServer).VersionGet(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/api.GoCloudPlaylist/VersionGet",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GoCloudPlaylistServer).VersionGet(ctx, req.(*VersionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _GoCloudPlaylist_UploadVersionToPlaylist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(VersionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GoCloudPlaylistServer).UploadVersionToPlaylist(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/api.GoCloudPlaylist/UploadVersionToPlaylist",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GoCloudPlaylistServer).UploadVersionToPlaylist(ctx, req.(*VersionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // GoCloudPlaylist_ServiceDesc is the grpc.ServiceDesc for GoCloudPlaylist service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -384,14 +318,6 @@ var GoCloudPlaylist_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Status",
 			Handler:    _GoCloudPlaylist_Status_Handler,
-		},
-		{
-			MethodName: "VersionGet",
-			Handler:    _GoCloudPlaylist_VersionGet_Handler,
-		},
-		{
-			MethodName: "UploadVersionToPlaylist",
-			Handler:    _GoCloudPlaylist_UploadVersionToPlaylist_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
