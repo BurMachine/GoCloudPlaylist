@@ -34,8 +34,8 @@ func (h *HttpHandlers) AddSong(w http.ResponseWriter, r *http.Request) {
 	}
 	ok := h.Pl.AddNewSong(playlist.Song{Name: song.Name, Duration: dur})
 	if !ok {
-		h.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(errors.New("new song adding error")).Msg("empty song is not created")
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		h.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(errors.New("new song adding error")).Msg("song already exist")
+		http.Error(w, errors.New("song adding error, song already exist or incorrect input").Error(), http.StatusBadRequest)
 		return
 	}
 

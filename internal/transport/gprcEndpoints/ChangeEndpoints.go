@@ -18,8 +18,8 @@ func (s *GrpcEndpoints) AddSong(ctx context.Context, req *api.AddRequest) (*api.
 	}
 	ok := s.Pl.AddNewSong(playlist.Song{Name: req.Name, Duration: time})
 	if !ok {
-		s.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(errors.New("new song adding error")).Msg("empty song is not created")
-		return nil, errors.New("new song adding error")
+		s.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(errors.New("new song adding error")).Msg("song already exist")
+		return nil, errors.New("new song adding error, song already exist or incorrect input")
 	}
 	list, err := s.Pl.GetList()
 	if err != nil {

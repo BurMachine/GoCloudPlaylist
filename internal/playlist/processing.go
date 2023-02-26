@@ -93,6 +93,17 @@ func (pl *Playlist) Status() SongProcessing {
 func (pl *Playlist) AddNewSong(song Song) bool {
 	pl.mutex.Lock()
 	defer pl.mutex.Unlock()
+
+	for e := pl.list.Front(); e != nil; e = e.Next() {
+		tmp, ok := e.Value.(Song)
+		if !ok {
+			return false
+		}
+		if tmp.Name == song.Name {
+			return false
+		}
+	}
+
 	el := pl.list.PushBack(song)
 	if el == nil {
 		return false
