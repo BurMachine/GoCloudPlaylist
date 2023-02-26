@@ -54,13 +54,46 @@ func (h *HttpHandlers) AddSong(w http.ResponseWriter, r *http.Request) {
 
 	h.Pl.Logger.Info().Msg(fmt.Sprintf("[%v] added into playlist", playlist.Song{Name: song.Name, Duration: dur}))
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
 
 func (h *HttpHandlers) DeleteSong(w http.ResponseWriter, r *http.Request) {
+	songName := r.URL.Query().Get("name")
+	if songName == "" {
+		h.Pl.Logger.WithLevel(zerolog.WarnLevel).Msg("method GET query is empty")
+		http.Error(w, errors.New("empty link").Error(), http.StatusBadRequest)
+		return
+	}
 
-	h.Pl.Logger.Info().Msg("Privet")
+	err := h.Pl.DeleteSong(songName)
+	if err != nil {
+		h.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("song deleting error")
+		if errors.Is(err, errors.New("can't delete song while playing")) {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		} else {
+			http.Error(w, err.Error(), http.StatusNotFound)
+		}
+		return
+	}
 
-	w.Header().Set("Content-Type", "text/plain")
-	fmt.Fprint(w, "Privet delete)")
+	list, err := h.Pl.GetList()
+	if err != nil {
+		h.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("playlist getting error in DeleteSong")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	res, err := json.Marshal(list)
+	if err != nil {
+		h.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("result playlist marshalling error")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	h.Pl.Logger.Info().Msg(fmt.Sprintf("[%s] deleted from playlist", songName))
+
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	w.Write(res)
 }

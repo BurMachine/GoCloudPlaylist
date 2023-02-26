@@ -77,6 +77,7 @@ func (h *HttpHandlers) NextSong(w http.ResponseWriter, r *http.Request) {
 	h.Pl.Logger.Info().Msg(fmt.Sprintf("next song: [%v] at %s (exist: %v)", songProc, timeString, songProc.Exist))
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
 
@@ -106,6 +107,7 @@ func (h *HttpHandlers) PrevSong(w http.ResponseWriter, r *http.Request) {
 	}
 	h.Pl.Logger.Info().Msg(fmt.Sprintf("prev song: [%v] at %s (exist: %v)", songProc, timeString, songProc.Exist))
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
 
@@ -136,5 +138,6 @@ func (h *HttpHandlers) Status(w http.ResponseWriter, r *http.Request) {
 
 	h.Pl.Logger.Info().Msg(fmt.Sprintf("status song: [%v] at %s(playing: %v)", songProc, timeString, songProc.Playing))
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
