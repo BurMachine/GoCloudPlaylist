@@ -1,6 +1,7 @@
 package playlist
 
 import (
+	"GoCloudPlaylist/internal/models"
 	"errors"
 )
 
@@ -90,12 +91,12 @@ func (pl *Playlist) Status() SongProcessing {
 
 // Изменение плейлиста
 
-func (pl *Playlist) AddNewSong(song Song) bool {
+func (pl *Playlist) AddNewSong(song models.Song) bool {
 	pl.mutex.Lock()
 	defer pl.mutex.Unlock()
 
 	for e := pl.list.Front(); e != nil; e = e.Next() {
-		tmp, ok := e.Value.(Song)
+		tmp, ok := e.Value.(models.Song)
 		if !ok {
 			return false
 		}
@@ -111,12 +112,12 @@ func (pl *Playlist) AddNewSong(song Song) bool {
 	return true
 }
 
-func (pl *Playlist) GetList() ([]Song, error) {
-	var res []Song
+func (pl *Playlist) GetList() ([]models.Song, error) {
+	var res []models.Song
 	pl.mutex.Lock()
 	defer pl.mutex.Unlock()
 	for e := pl.list.Front(); e != nil; e = e.Next() {
-		tmp, ok := e.Value.(Song)
+		tmp, ok := e.Value.(models.Song)
 		if !ok {
 			return res, errors.New("element to Song converting error")
 		}
@@ -136,12 +137,12 @@ func (pl *Playlist) DeleteSong(name string) error {
 		break
 	}
 
-	el, ok := pl.current.currentElem.Value.(Song)
+	el, ok := pl.current.currentElem.Value.(models.Song)
 	if !ok {
 		return errors.New("element to Song converting error")
 	}
 	for e := pl.list.Front(); e != nil; e = e.Next() {
-		tmp, ok := e.Value.(Song)
+		tmp, ok := e.Value.(models.Song)
 		if !ok {
 			return errors.New("element to Song converting error")
 		}
@@ -163,4 +164,10 @@ func (pl *Playlist) DeleteSong(name string) error {
 	}
 
 	return nil
+}
+
+func (pl *Playlist) LoadListToPlaylistFromStorage(storageList []models.Song) {
+	for _, s := range storageList {
+		pl.list.PushBack(s)
+	}
 }

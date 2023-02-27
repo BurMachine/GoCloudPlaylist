@@ -1,7 +1,6 @@
 
 .PHONY = build
 build:
-	docker build .
 	docker compose up -d --remove-orphans
 
 
@@ -16,6 +15,11 @@ restart:
 	docker compose down
 	docker rmi gocloudplaylist_api
 	docker compose up -d
+
+
+.PHONY = stop
+stop:
+	docker kill --signal=SIGKILL  gocloudplaylist_api
 
 gen:
 	export GO111MODULE=on  # Enable module mode

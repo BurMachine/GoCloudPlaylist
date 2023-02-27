@@ -1,17 +1,13 @@
 package playlist
 
 import (
+	"GoCloudPlaylist/internal/models"
 	"container/list"
 	_ "container/list"
 	"github.com/rs/zerolog"
 	"sync"
 	"time"
 )
-
-type Song struct {
-	Name     string
-	Duration int
-}
 
 type Playlist struct {
 	list    *list.List
@@ -57,19 +53,14 @@ func Init() *Playlist {
 }
 
 func (pl *Playlist) Run() {
-	// Временно
-	pl.list.PushBack(Song{Name: "Run Free", Duration: 10})
-	pl.list.PushBack(Song{Name: "Demolisher", Duration: 11})
-	// Временно
-
 	pl.current.currentElem = pl.list.Front()
 	for {
 		if pl.current.currentElem == nil {
-			println("finished")
-			break
+			pl.current.currentElem = pl.list.Front()
+			continue
 		}
 		if pl.playing {
-			el, ok := pl.current.currentElem.Value.(Song)
+			el, ok := pl.current.currentElem.Value.(models.Song)
 			if !ok {
 				println(123)
 			}
@@ -101,11 +92,11 @@ func (pl *Playlist) playingProc(i int) string {
 
 	select {
 	case <-pl.StopChan:
-		el, _ := pl.current.currentElem.Value.(Song)
+		el, _ := pl.current.currentElem.Value.(models.Song)
 		pl.RequestChan <- SongProcessing{Name: el.Name, CurrentTime: i, Duration: el.Duration}
 		select {
 		case <-pl.PlayChan:
-			el, _ = pl.current.currentElem.Value.(Song)
+			el, _ = pl.current.currentElem.Value.(models.Song)
 			pl.RequestChan <- SongProcessing{Name: el.Name, CurrentTime: i, Duration: el.Duration, Exist: true, Playing: true}
 			break
 		case <-pl.StopChan:
@@ -130,7 +121,7 @@ func (pl *Playlist) playingProc(i int) string {
 			return "exit"
 		}
 	case <-pl.PlayChan:
-		el, _ := pl.current.currentElem.Value.(Song)
+		el, _ := pl.current.currentElem.Value.(models.Song)
 		pl.RequestChan <- SongProcessing{Name: el.Name, CurrentTime: i, Duration: el.Duration, Exist: true, Playing: true}
 	case data := <-pl.NextChan:
 		if data {
@@ -147,7 +138,7 @@ func (pl *Playlist) playingProc(i int) string {
 			return "next"
 		}
 	case <-pl.StatusChan:
-		el, _ := pl.current.currentElem.Value.(Song)
+		el, _ := pl.current.currentElem.Value.(models.Song)
 		pl.RequestChan <- SongProcessing{Name: el.Name, Duration: el.Duration, CurrentTime: i, Playing: true}
 	case <-pl.ExitChan:
 		return "exit"
@@ -160,12 +151,12 @@ func (pl *Playlist) playingProc(i int) string {
 func (pl *Playlist) pausedProc() string {
 	select {
 	case <-pl.PlayChan:
-		el, _ := pl.current.currentElem.Value.(Song)
+		el, _ := pl.current.currentElem.Value.(models.Song)
 		pl.RequestChan <- SongProcessing{Name: el.Name, CurrentTime: 0, Duration: el.Duration, Exist: true, Playing: true}
 		pl.playing = true
 		break
 	case <-pl.StopChan:
-		el, _ := pl.current.currentElem.Value.(Song)
+		el, _ := pl.current.currentElem.Value.(models.Song)
 		pl.RequestChan <- SongProcessing{Name: el.Name, CurrentTime: 0, Duration: el.Duration, Exist: true, Playing: true}
 		break
 	case data := <-pl.NextChan:
@@ -183,7 +174,7 @@ func (pl *Playlist) pausedProc() string {
 			return "next"
 		}
 	case <-pl.StatusChan:
-		el, _ := pl.current.currentElem.Value.(Song)
+		el, _ := pl.current.currentElem.Value.(models.Song)
 		pl.RequestChan <- SongProcessing{Name: el.Name, Duration: el.Duration, CurrentTime: 0, Playing: false}
 		break
 	case <-pl.ExitChan:

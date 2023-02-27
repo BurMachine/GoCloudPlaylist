@@ -1,7 +1,7 @@
 package gprcEndpoints
 
 import (
-	"GoCloudPlaylist/internal/playlist"
+	"GoCloudPlaylist/internal/models"
 	api "GoCloudPlaylist/pkg/api"
 	"GoCloudPlaylist/pkg/timeConverting"
 	"context"
@@ -16,7 +16,7 @@ func (s *GrpcEndpoints) AddSong(ctx context.Context, req *api.AddRequest) (*api.
 		s.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("parse time to seconds error")
 		return nil, err
 	}
-	ok := s.Pl.AddNewSong(playlist.Song{Name: req.Name, Duration: time})
+	ok := s.Pl.AddNewSong(models.Song{Name: req.Name, Duration: time})
 	if !ok {
 		s.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(errors.New("new song adding error")).Msg("song already exist")
 		return nil, errors.New("new song adding error, song already exist or incorrect input")
@@ -35,7 +35,7 @@ func (s *GrpcEndpoints) AddSong(ctx context.Context, req *api.AddRequest) (*api.
 		}
 		res.Playlist = append(res.Playlist, &songRes)
 	}
-	s.Pl.Logger.Info().Msg(fmt.Sprintf("[%v] added into playlist", playlist.Song{Name: req.Name, Duration: time}))
+	s.Pl.Logger.Info().Msg(fmt.Sprintf("[%v] added into playlist", models.Song{Name: req.Name, Duration: time}))
 	return &res, nil
 }
 

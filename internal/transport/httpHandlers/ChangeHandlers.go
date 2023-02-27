@@ -1,7 +1,7 @@
 package httpHandlers
 
 import (
-	"GoCloudPlaylist/internal/playlist"
+	"GoCloudPlaylist/internal/models"
 	"GoCloudPlaylist/pkg/timeConverting"
 	"encoding/json"
 	"errors"
@@ -32,7 +32,7 @@ func (h *HttpHandlers) AddSong(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	ok := h.Pl.AddNewSong(playlist.Song{Name: song.Name, Duration: dur})
+	ok := h.Pl.AddNewSong(models.Song{Name: song.Name, Duration: dur})
 	if !ok {
 		h.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(errors.New("new song adding error")).Msg("song already exist")
 		http.Error(w, errors.New("song adding error, song already exist or incorrect input").Error(), http.StatusBadRequest)
@@ -52,7 +52,7 @@ func (h *HttpHandlers) AddSong(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.Pl.Logger.Info().Msg(fmt.Sprintf("[%v] added into playlist", playlist.Song{Name: song.Name, Duration: dur}))
+	h.Pl.Logger.Info().Msg(fmt.Sprintf("[%v] added into playlist", models.Song{Name: song.Name, Duration: dur}))
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)

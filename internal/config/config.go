@@ -10,7 +10,7 @@ import (
 type Conf struct {
 	AddrHttp string `yaml:"port"`
 	AddrGrpc string `yaml:"port_grpc"`
-	//DbUrl    string `yaml:"db_url"`
+	DbUrl    string `yaml:"db_url"`
 }
 
 func NewConfigStruct() *Conf {
