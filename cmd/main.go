@@ -23,6 +23,7 @@ func main() {
 	flag.Parse()
 
 	logger := zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger()
+	logger.Info().Msg("service star")
 
 	conf := config.NewConfigStruct()
 	err := conf.LoadConfig(*cfgPath)
@@ -45,6 +46,7 @@ func main() {
 		logger.Fatal().Err(err).Msg("playlist init error")
 	}
 	pl.LoadListToPlaylistFromStorage(storageList)
+	logger.Info().Msg("playlist initialized")
 
 	// Инициализация сервера
 	serv := PlaylistServer.New(pl)
@@ -75,7 +77,7 @@ func main() {
 		}
 		logger.Info().Msg("state uploaded")
 	}
-	//ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+
 	wg.Wait()
 	logger.Info().Msg("service exit")
 }
