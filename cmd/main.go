@@ -5,13 +5,17 @@ import (
 	"GoCloudPlaylist/internal/playlist"
 	PlaylistServer "GoCloudPlaylist/internal/server"
 	"flag"
+	"fmt"
 	"github.com/rs/zerolog"
 	"os"
+	"os/signal"
 	"sync"
-	"time"
 )
 
 func main() {
+	signalCh := make(chan os.Signal)
+	signal.Notify(signalCh, os.Interrupt, os.Kill)
+
 	cfgPath := flag.String("config", "./config.yaml", "Path to yaml configuration file")
 	flag.Parse()
 
@@ -33,9 +37,7 @@ func main() {
 	wg := &sync.WaitGroup{}
 	serv.Conf = conf
 	go func() {
-		wg.Add(1)
 		serv.Run()
-		wg.Done()
 	}()
 
 	go func() {
@@ -44,28 +46,14 @@ func main() {
 		wg.Done()
 	}()
 	//time.Sleep(15 * time.Second)
+	//
+	//time.Sleep(3 * time.Second)
+	////pl.Play()
+	//pl.AddNewSong(playlist.Song{Name: "Kingslayer", Duration: 12})
 
-	time.Sleep(3 * time.Second)
-	//pl.Play()
-	pl.AddNewSong(playlist.Song{Name: "Kingslayer", Duration: 12})
-	//l, err := pl.GetList()
-	//if err != nil {
-	//	println("((((")
-	//}
-	//fmt.Println(l)
-	//time.Sleep(5 * time.Second)
-	//err = pl.DeleteSong("Run Free")
-	//if err != nil {
-	//	println("((((1")
-	//}
-	//time.Sleep(2 * time.Second)
-	//l, err = pl.GetList()
-	//if err != nil {
-	//	println("((((")
-	//}
-	//fmt.Println(l)
-	//pl.Status()
-
+	<-signalCh
+	fmt.Printf("\nGracefully stopping...\n")
+	pl.ExitChan <- struct{}{}
 	wg.Wait()
 	logger.Info().Msg("service exit")
 }

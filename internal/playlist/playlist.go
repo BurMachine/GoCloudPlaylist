@@ -31,6 +31,9 @@ type Playlist struct {
 	// Каналы ответа
 	RequestChan chan SongProcessing
 
+	// Graceful shutdown
+	ExitChan chan struct{}
+
 	Logger *zerolog.Logger
 }
 
@@ -49,6 +52,7 @@ func Init() *Playlist {
 		PrevChan:    make(chan bool),
 		StatusChan:  make(chan struct{}),
 		RequestChan: make(chan SongProcessing),
+		ExitChan:    make(chan struct{}),
 	}
 }
 
@@ -75,6 +79,8 @@ func (pl *Playlist) Run() {
 					break
 				} else if action == "prev" {
 					break
+				} else if action == "exit" {
+					return
 				} else if i == el.Duration-1 {
 					pl.current.currentElem = pl.current.currentElem.Next()
 					break
@@ -82,7 +88,10 @@ func (pl *Playlist) Run() {
 			}
 			continue
 		} else {
-			pl.pausedProc()
+			action := pl.pausedProc()
+			if action == "exit" {
+				return
+			}
 			continue
 		}
 	}
@@ -117,6 +126,8 @@ func (pl *Playlist) playingProc(i int) string {
 			}
 		case <-pl.StatusChan:
 			pl.RequestChan <- SongProcessing{Name: el.Name, Duration: el.Duration, CurrentTime: i, Playing: false}
+		case <-pl.ExitChan:
+			return "exit"
 		}
 	case <-pl.PlayChan:
 		el, _ := pl.current.currentElem.Value.(Song)
@@ -138,6 +149,8 @@ func (pl *Playlist) playingProc(i int) string {
 	case <-pl.StatusChan:
 		el, _ := pl.current.currentElem.Value.(Song)
 		pl.RequestChan <- SongProcessing{Name: el.Name, Duration: el.Duration, CurrentTime: i, Playing: true}
+	case <-pl.ExitChan:
+		return "exit"
 	default:
 		time.Sleep(time.Second)
 	}
@@ -173,6 +186,8 @@ func (pl *Playlist) pausedProc() string {
 		el, _ := pl.current.currentElem.Value.(Song)
 		pl.RequestChan <- SongProcessing{Name: el.Name, Duration: el.Duration, CurrentTime: 0, Playing: false}
 		break
+	case <-pl.ExitChan:
+		return "exit"
 	}
 	return ""
 }
