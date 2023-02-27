@@ -15,6 +15,12 @@ import (
 	"syscall"
 )
 
+// @title GoCloudPlaylist API
+// @version 1.0
+// @description API Server for GoCloudPlaylist Application
+
+// @host localhost:8080
+// @BasePath /
 func main() {
 	signalCh := make(chan os.Signal)
 	signal.Notify(signalCh, os.Interrupt, os.Kill, syscall.SIGTERM, syscall.SIGINT)

@@ -11,6 +11,16 @@ import (
 	"net/http"
 )
 
+// @Summary Add a new song to the playlist
+// @Description Adds a new song to the playlist with the given name and duration
+// @Tags Playlist
+// @Accept json
+// @Produce json
+// @Param song body models.Song true "Song object to add to the playlist"
+// @Success 200 {object} []models.Song "List of all songs in the playlist"
+// @Failure 400 {string} string "Bad request"
+// @Failure 500 {string} string "Internal server error"
+// @Router /playlist/song [post]
 func (h *HttpHandlers) AddSong(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
