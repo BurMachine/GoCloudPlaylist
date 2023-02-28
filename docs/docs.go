@@ -102,6 +102,169 @@ const docTemplate = `{
                             "type": "string"
                         }
                     },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/next_song": {
+            "get": {
+                "description": "Switch to the next song if it exists",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Playlist"
+                ],
+                "summary": "Switch to next song",
+                "responses": {
+                    "200": {
+                        "description": "Playback status",
+                        "schema": {
+                            "$ref": "#/definitions/httpHandlers.ProcessingResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/pause": {
+            "get": {
+                "description": "Pause track playback",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Playlist"
+                ],
+                "summary": "Pause playback",
+                "responses": {
+                    "200": {
+                        "description": "Playback status",
+                        "schema": {
+                            "$ref": "#/definitions/httpHandlers.ProcessingResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/play": {
+            "get": {
+                "description": "Unpauses track playback",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Playlist"
+                ],
+                "summary": "Start playback",
+                "responses": {
+                    "200": {
+                        "description": "Playback status",
+                        "schema": {
+                            "$ref": "#/definitions/httpHandlers.ProcessingResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/prev_song": {
+            "get": {
+                "description": "Switch to the previous song if it exists",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Playlist"
+                ],
+                "summary": "Switch to previous song",
+                "responses": {
+                    "200": {
+                        "description": "Playback status",
+                        "schema": {
+                            "$ref": "#/definitions/httpHandlers.ProcessingResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/status": {
+            "get": {
+                "description": "Switch to the previous song if it exists",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Playlist"
+                ],
+                "summary": "Playback status",
+                "responses": {
+                    "200": {
+                        "description": "Playback status",
+                        "schema": {
+                            "$ref": "#/definitions/httpHandlers.ProcessingResponse"
+                        }
+                    },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
@@ -113,6 +276,20 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "httpHandlers.ProcessingResponse": {
+            "type": "object",
+            "properties": {
+                "playback_status": {
+                    "type": "string"
+                },
+                "song_duration": {
+                    "type": "string"
+                },
+                "song_name": {
+                    "type": "string"
+                }
+            }
+        },
         "httpHandlers.Song": {
             "type": "object",
             "properties": {

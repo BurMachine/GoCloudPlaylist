@@ -1,8 +1,6 @@
-
 .PHONY = build
 build:
 	docker compose up -d --remove-orphans
-
 
 .PHONY = rm_containers
 rm_containers:

@@ -1,5 +1,14 @@
 basePath: /
 definitions:
+  httpHandlers.ProcessingResponse:
+    properties:
+      playback_status:
+        type: string
+      song_duration:
+        type: string
+      song_name:
+        type: string
+    type: object
   httpHandlers.Song:
     properties:
       song_duration:
@@ -78,11 +87,118 @@ paths:
           description: Bad request
           schema:
             type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
         "500":
           description: Internal server error
           schema:
             type: string
       summary: Delete song from playlist
+      tags:
+      - Playlist
+  /next_song:
+    get:
+      consumes:
+      - application/json
+      description: Switch to the next song if it exists
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Playback status
+          schema:
+            $ref: '#/definitions/httpHandlers.ProcessingResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Switch to next song
+      tags:
+      - Playlist
+  /pause:
+    get:
+      consumes:
+      - application/json
+      description: Pause track playback
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Playback status
+          schema:
+            $ref: '#/definitions/httpHandlers.ProcessingResponse'
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Pause playback
+      tags:
+      - Playlist
+  /play:
+    get:
+      consumes:
+      - application/json
+      description: Unpauses track playback
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Playback status
+          schema:
+            $ref: '#/definitions/httpHandlers.ProcessingResponse'
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Start playback
+      tags:
+      - Playlist
+  /prev_song:
+    get:
+      consumes:
+      - application/json
+      description: Switch to the previous song if it exists
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Playback status
+          schema:
+            $ref: '#/definitions/httpHandlers.ProcessingResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Switch to previous song
+      tags:
+      - Playlist
+  /status:
+    get:
+      consumes:
+      - application/json
+      description: Switch to the previous song if it exists
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Playback status
+          schema:
+            $ref: '#/definitions/httpHandlers.ProcessingResponse'
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Playback status
       tags:
       - Playlist
 swagger: "2.0"

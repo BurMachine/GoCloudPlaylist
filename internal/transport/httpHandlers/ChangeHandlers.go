@@ -76,6 +76,7 @@ func (h *HttpHandlers) AddSong(w http.ResponseWriter, r *http.Request) {
 // @Param name query string true "Song's name to delete"
 // @Success 200 {object} []models.Song "List of all songs in the playlist"
 // @Failure 400 {string} string "Bad request"
+// @Failure 404 {string} string "Not Found"
 // @Failure 500 {string} string "Internal server error"
 // @Router /delete_song [get]
 func (h *HttpHandlers) DeleteSong(w http.ResponseWriter, r *http.Request) {
