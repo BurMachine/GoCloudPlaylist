@@ -15,9 +15,9 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/playlist/song": {
+        "/add_song": {
             "post": {
-                "description": "Adds a new song to the playlist with the given name and duration",
+                "description": "Adds a new song to the playlist with the given name and duration (duration format 00:01:30)",
                 "consumes": [
                     "application/json"
                 ],
@@ -35,8 +35,55 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Song"
+                            "$ref": "#/definitions/httpHandlers.Song"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of all songs in the playlist",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Song"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/delete_song": {
+            "get": {
+                "description": "Deletes the song with the given name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Playlist"
+                ],
+                "summary": "Delete song from playlist",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Song's name to delete",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -66,6 +113,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "httpHandlers.Song": {
+            "type": "object",
+            "properties": {
+                "song_duration": {
+                    "type": "string"
+                },
+                "song_name": {
+                    "type": "string"
+                }
+            }
+        },
         "models.Song": {
             "type": "object",
             "properties": {

@@ -12,15 +12,15 @@ import (
 )
 
 // @Summary Add a new song to the playlist
-// @Description Adds a new song to the playlist with the given name and duration
+// @Description Adds a new song to the playlist with the given name and duration (duration format 00:01:30)
 // @Tags Playlist
 // @Accept json
 // @Produce json
-// @Param song body models.Song true "Song object to add to the playlist"
+// @Param song body Song true "Song object to add to the playlist"
 // @Success 200 {object} []models.Song "List of all songs in the playlist"
 // @Failure 400 {string} string "Bad request"
 // @Failure 500 {string} string "Internal server error"
-// @Router /playlist/song [post]
+// @Router /add_song [post]
 func (h *HttpHandlers) AddSong(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -68,6 +68,16 @@ func (h *HttpHandlers) AddSong(w http.ResponseWriter, r *http.Request) {
 	w.Write(res)
 }
 
+// @Summary Delete song from playlist
+// @Description Deletes the song with the given name
+// @Tags Playlist
+// @Accept json
+// @Produce json
+// @Param name query string true "Song's name to delete"
+// @Success 200 {object} []models.Song "List of all songs in the playlist"
+// @Failure 400 {string} string "Bad request"
+// @Failure 500 {string} string "Internal server error"
+// @Router /delete_song [get]
 func (h *HttpHandlers) DeleteSong(w http.ResponseWriter, r *http.Request) {
 	songName := r.URL.Query().Get("name")
 	if songName == "" {

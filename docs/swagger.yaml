@@ -1,5 +1,12 @@
 basePath: /
 definitions:
+  httpHandlers.Song:
+    properties:
+      song_duration:
+        type: string
+      song_name:
+        type: string
+    type: object
   models.Song:
     properties:
       duration:
@@ -14,18 +21,19 @@ info:
   title: GoCloudPlaylist API
   version: "1.0"
 paths:
-  /playlist/song:
+  /add_song:
     post:
       consumes:
       - application/json
       description: Adds a new song to the playlist with the given name and duration
+        (duration format 00:01:30)
       parameters:
       - description: Song object to add to the playlist
         in: body
         name: song
         required: true
         schema:
-          $ref: '#/definitions/models.Song'
+          $ref: '#/definitions/httpHandlers.Song'
       produces:
       - application/json
       responses:
@@ -44,6 +52,37 @@ paths:
           schema:
             type: string
       summary: Add a new song to the playlist
+      tags:
+      - Playlist
+  /delete_song:
+    get:
+      consumes:
+      - application/json
+      description: Deletes the song with the given name
+      parameters:
+      - description: Song's name to delete
+        in: query
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of all songs in the playlist
+          schema:
+            items:
+              $ref: '#/definitions/models.Song'
+            type: array
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Delete song from playlist
       tags:
       - Playlist
 swagger: "2.0"
