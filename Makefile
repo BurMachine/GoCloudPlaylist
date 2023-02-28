@@ -37,3 +37,6 @@ swagger:
 	go install github.com/swaggo/swag/cmd/swag@latest
 	PATH=$(go env GOPATH)/bin:$PATH
 	swag init -g cmd/main.go
+
+test:
+	go test ./pkg/timeConverting -v -cover

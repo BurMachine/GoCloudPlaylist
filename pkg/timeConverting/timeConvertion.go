@@ -13,6 +13,9 @@ func ConvertFromSongProcToString(songProc playlist.SongProcessing) string {
 }
 
 func ConvertFromSecondsToString(seconds int) string {
+	if seconds < 0 {
+		return ""
+	}
 	duration := time.Duration(seconds) * time.Second
 	Hours := int(duration.Hours())
 	Minutes := int(duration.Minutes()) % 60
