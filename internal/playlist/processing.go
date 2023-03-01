@@ -141,6 +141,10 @@ func (pl *Playlist) DeleteSong(name string) error {
 	if !ok {
 		return errors.New("element to Song converting error")
 	}
+	e := pl.list.Len()
+	if e == 0 {
+		return errors.New("song does not exist in playlist")
+	}
 	for e := pl.list.Front(); e != nil; e = e.Next() {
 		tmp, ok := e.Value.(models.Song)
 		if !ok {

@@ -3,6 +3,7 @@ module GoCloudPlaylist
 go 1.19
 
 require (
+	github.com/golang/mock v1.6.0
 	github.com/gorilla/mux v1.8.0
 	github.com/jackc/pgx/v5 v5.3.0
 	github.com/rs/zerolog v1.29.0

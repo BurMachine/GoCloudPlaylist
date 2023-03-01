@@ -39,4 +39,9 @@ swagger:
 	swag init -g cmd/main.go
 
 test:
-	go test ./pkg/timeConverting -v -cover
+	#go test ./pkg/timeConverting -v -cover
+	go test ./internal/transport/gprcEndpoints -v -cover
+
+mock:
+	go install github.com/golang/mock/mockgen@latest
+	mockgen -destination=internal/playlist/mock/gomock_interface.go -source=internal/playlist/mock_interface.go

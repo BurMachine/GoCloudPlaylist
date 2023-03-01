@@ -8,23 +8,29 @@ import (
 	"errors"
 	"fmt"
 	"github.com/rs/zerolog"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (s *GrpcEndpoints) AddSong(ctx context.Context, req *api.AddRequest) (*api.PlaylistResponse, error) {
 	time, err := timeConverting.ParseTimeToSeconds(req.Time)
 	if err != nil {
 		s.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("parse time to seconds error")
-		return nil, err
+		return nil, status.Error(codes.FailedPrecondition, "incorrect duration format")
+	}
+	if req.Name == "" {
+		s.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("empty name")
+		return nil, status.Error(codes.FailedPrecondition, "empty name")
 	}
 	ok := s.Pl.AddNewSong(models.Song{Name: req.Name, Duration: time})
 	if !ok {
 		s.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(errors.New("new song adding error")).Msg("song already exist")
-		return nil, errors.New("new song adding error, song already exist or incorrect input")
+		return nil, status.Error(codes.FailedPrecondition, "new song adding error, song already exist or incorrect input")
 	}
 	list, err := s.Pl.GetList()
 	if err != nil {
 		s.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("playlist getting error in AddSong")
-		return nil, err
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 	var res api.PlaylistResponse
 	for _, song := range list {
@@ -36,7 +42,7 @@ func (s *GrpcEndpoints) AddSong(ctx context.Context, req *api.AddRequest) (*api.
 		res.Playlist = append(res.Playlist, &songRes)
 	}
 	s.Pl.Logger.Info().Msg(fmt.Sprintf("[%v] added into playlist", models.Song{Name: req.Name, Duration: time}))
-	return &res, nil
+	return &res, status.Error(codes.OK, "OK")
 }
 
 func (s *GrpcEndpoints) DeleteSong(ctx context.Context, req *api.SongNameForDelete) (*api.PlaylistResponse, error) {
@@ -44,7 +50,7 @@ func (s *GrpcEndpoints) DeleteSong(ctx context.Context, req *api.SongNameForDele
 	err := s.Pl.DeleteSong(req.Name)
 	if err != nil {
 		s.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("song deleting error")
-		return &res, err
+		return &res, status.Error(codes.FailedPrecondition, err.Error())
 	}
 
 	list, err := s.Pl.GetList()

@@ -5,6 +5,8 @@ import (
 	"GoCloudPlaylist/pkg/timeConverting"
 	"context"
 	"fmt"
+	"google.golang.org/grpc/codes"
+	st "google.golang.org/grpc/status"
 )
 
 func (s *GrpcEndpoints) PlaySong(ctx context.Context, req *api.Empty) (*api.SongProc, error) {
@@ -15,7 +17,7 @@ func (s *GrpcEndpoints) PlaySong(ctx context.Context, req *api.Empty) (*api.Song
 		Name:   songProc.Name,
 		Time:   timeConverting.ConvertFromSecondsToString(songProc.Duration),
 		Status: fmt.Sprintf("%s plays at %s", songProc.Name, timeString),
-	}, nil
+	}, st.Errorf(codes.OK, "OK")
 }
 
 func (s *GrpcEndpoints) PauseSong(ctx context.Context, req *api.Empty) (*api.SongProc, error) {
@@ -26,7 +28,7 @@ func (s *GrpcEndpoints) PauseSong(ctx context.Context, req *api.Empty) (*api.Son
 		Name:   songProc.Name,
 		Time:   timeConverting.ConvertFromSecondsToString(songProc.Duration),
 		Status: fmt.Sprintf("%s is paused at %s", songProc.Name, timeString),
-	}, nil
+	}, st.Errorf(codes.OK, "OK")
 }
 
 func (s *GrpcEndpoints) Next(ctx context.Context, req *api.Empty) (*api.SongProc, error) {
@@ -37,14 +39,16 @@ func (s *GrpcEndpoints) Next(ctx context.Context, req *api.Empty) (*api.SongProc
 	var status string
 	if songProc.Exist {
 		status = fmt.Sprintf("Switched to next song: %s", songProc.Name)
+		return &api.SongProc{
+			Name:   songProc.Name,
+			Time:   timeConverting.ConvertFromSecondsToString(songProc.Duration),
+			Status: status,
+		}, st.Errorf(codes.OK, "OK")
 	} else {
 		status = "The next song does not exist, so you are at the end of the playlist."
+		return &api.SongProc{}, st.Errorf(codes.NotFound, status)
 	}
-	return &api.SongProc{
-		Name:   songProc.Name,
-		Time:   timeConverting.ConvertFromSecondsToString(songProc.Duration),
-		Status: status,
-	}, nil
+
 }
 
 func (s *GrpcEndpoints) Prev(ctx context.Context, req *api.Empty) (*api.SongProc, error) {
@@ -54,14 +58,17 @@ func (s *GrpcEndpoints) Prev(ctx context.Context, req *api.Empty) (*api.SongProc
 	var status string
 	if songProc.Exist {
 		status = fmt.Sprintf("Switched to previous song: %s", songProc.Name)
+		return &api.SongProc{
+			Name:   songProc.Name,
+			Time:   timeConverting.ConvertFromSecondsToString(songProc.Duration),
+			Status: status,
+		}, st.Errorf(codes.OK, "OK")
 	} else {
 		status = "The previous song does not exist, so you are at the beginning of the playlist."
+		return &api.SongProc{}, st.Errorf(codes.NotFound, status)
+
 	}
-	return &api.SongProc{
-		Name:   songProc.Name,
-		Time:   timeConverting.ConvertFromSecondsToString(songProc.Duration),
-		Status: status,
-	}, nil
+
 }
 
 func (s *GrpcEndpoints) Status(ctx context.Context, req *api.Empty) (*api.SongProc, error) {
@@ -78,5 +85,5 @@ func (s *GrpcEndpoints) Status(ctx context.Context, req *api.Empty) (*api.SongPr
 		Name:   songProc.Name,
 		Time:   timeConverting.ConvertFromSecondsToString(songProc.Duration),
 		Status: status,
-	}, nil
+	}, st.Errorf(codes.OK, "OK")
 }
