@@ -35,8 +35,8 @@ func (h *HttpHandlers) PlaySong(w http.ResponseWriter, r *http.Request) {
 
 	h.Pl.Logger.Info().Msg(fmt.Sprintf("playing [%v] at %s", songProc, timeString))
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
 	w.Write(res)
-	return
 }
 
 // @Summary  Pause playback
@@ -65,6 +65,7 @@ func (h *HttpHandlers) PauseSong(w http.ResponseWriter, r *http.Request) {
 
 	h.Pl.Logger.Info().Msg(fmt.Sprintf("paused [%v] at %s", songProc, timeString))
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
 

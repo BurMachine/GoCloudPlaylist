@@ -41,6 +41,7 @@ swagger:
 test:
 	#go test ./pkg/timeConverting -v -cover
 	go test ./internal/transport/gprcEndpoints -v -cover
+	go test ./internal/transport/httpHandlers -v -cover
 
 mock:
 	go install github.com/golang/mock/mockgen@latest
