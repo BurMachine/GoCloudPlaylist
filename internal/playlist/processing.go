@@ -144,6 +144,9 @@ func (pl *Playlist) DeleteSong(name string) error {
 	case data = <-pl.RequestChan:
 		break
 	}
+	if pl.current.currentElem == nil {
+		return errors.New("playlist is empty")
+	}
 
 	el, ok := pl.current.currentElem.Value.(models.Song)
 	if !ok {

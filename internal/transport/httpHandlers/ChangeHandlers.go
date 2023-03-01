@@ -35,7 +35,11 @@ func (h *HttpHandlers) AddSong(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
+	if song.Name == "" {
+		h.Pl.Logger.WithLevel(zerolog.WarnLevel).Msg("empty name")
+		http.Error(w, errors.New("empty name").Error(), http.StatusBadRequest)
+		return
+	}
 	dur, err := timeConverting.ParseTimeToSeconds(song.Duration)
 	if err != nil {
 		h.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("time parsing error")
