@@ -43,11 +43,15 @@ func (pl *Playlist) Pause() SongProcessing {
 func (pl *Playlist) Next() SongProcessing {
 	var data SongProcessing
 	pl.mutex.RLock()
-	if pl.current.currentElem.Next() == nil {
+	if pl.current.currentElem == nil {
 		pl.NextChan <- false
 	} else {
-		pl.current.currentElem = pl.current.currentElem.Next()
-		pl.NextChan <- true
+		if pl.current.currentElem.Next() == nil {
+			pl.NextChan <- false
+		} else {
+			pl.current.currentElem = pl.current.currentElem.Next()
+			pl.NextChan <- true
+		}
 	}
 
 	select {
@@ -62,11 +66,15 @@ func (pl *Playlist) Prev() SongProcessing {
 	var data SongProcessing
 	pl.mutex.RLock()
 
-	if pl.current.currentElem.Prev() == nil {
-		pl.PrevChan <- false
+	if pl.current.currentElem == nil {
+		pl.NextChan <- false
 	} else {
-		pl.current.currentElem = pl.current.currentElem.Prev()
-		pl.PrevChan <- true
+		if pl.current.currentElem.Prev() == nil {
+			pl.PrevChan <- false
+		} else {
+			pl.current.currentElem = pl.current.currentElem.Prev()
+			pl.PrevChan <- true
+		}
 	}
 
 	select {

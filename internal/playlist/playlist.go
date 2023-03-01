@@ -56,6 +56,18 @@ func (pl *Playlist) Run() {
 	pl.current.currentElem = pl.list.Front()
 	for {
 		if pl.current.currentElem == nil {
+			select {
+			case <-pl.PlayChan:
+				pl.RequestChan <- SongProcessing{}
+			case <-pl.StopChan:
+				pl.RequestChan <- SongProcessing{}
+			case <-pl.StatusChan:
+				pl.RequestChan <- SongProcessing{}
+			case <-pl.NextChan:
+				pl.RequestChan <- SongProcessing{}
+			case <-pl.PrevChan:
+				pl.RequestChan <- SongProcessing{}
+			}
 			pl.current.currentElem = pl.list.Front()
 			continue
 		}
