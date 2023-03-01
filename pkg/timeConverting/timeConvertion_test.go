@@ -64,12 +64,14 @@ func TestParseTimeToSeconds(t *testing.T) {
 		assert.Equal(t, testCase.expected, result, fmt.Sprintf("incorrect result, expected %d, got %d",
 			testCase.expected, result))
 	}
-	result, err := ParseTimeToSeconds("")
-	if err == nil {
-		t.Error(err)
-	}
-	assert.Equal(t, 0, result, fmt.Sprintf("incorrect result, expected %d, got %d",
-		0, result))
+	t.Run("empty string test", func(t *testing.T) {
+		result, err := ParseTimeToSeconds("")
+		if err == nil {
+			t.Error(err)
+		}
+		assert.Equal(t, 0, result, fmt.Sprintf("incorrect result, expected %d, got %d",
+			0, result))
+	})
 }
 
 func TestConvertFromSongProcToString(t *testing.T) {
