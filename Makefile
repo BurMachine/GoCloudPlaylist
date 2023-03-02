@@ -15,8 +15,6 @@ restart:
 	docker compose up -d
 
 .PHONY = stop
-stop:
-	docker kill --signal=SIGKILL  gocloudplaylist_api
 
 .PHONY = gen
 gen:
@@ -37,11 +35,9 @@ swagger:
 	PATH=$(go env GOPATH)/bin:$PATH
 	swag init -g cmd/main.go
 
+.PHONY = test
 test:
 	go test ./internal/transport/httpHandlers -v -cover
 	go test ./internal/transport/gprcEndpoints -v -cover
 	go test ./pkg/timeConverting -v -cover
 
-mock:
-	go install github.com/golang/mock/mockgen@latest
-	mockgen -destination=internal/playlist/mock/gomock_interface.go -source=internal/playlist/mock_interface.go
