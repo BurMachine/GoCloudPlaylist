@@ -2,15 +2,11 @@ syntax = "proto3";
 
 option go_package = "./";
 
-
 package api;
 
 service GoCloudPlaylist {
-  // Добавление/удаление
   rpc AddSong(AddRequest) returns (PlaylistResponse) {}
   rpc DeleteSong(SongNameForDelete) returns (PlaylistResponse) {}
-
-  // Потоковые действия
   rpc PlaySong(Empty) returns (SongProc) {}
   rpc PauseSong(Empty) returns (SongProc) {}
   rpc Next(Empty) returns (SongProc) {}
@@ -18,14 +14,12 @@ service GoCloudPlaylist {
   rpc Status(Empty) returns (SongProc) {}
 }
 
-
 message SongProc {
   string name = 1;
   string time = 2;
   string status = 3;
 }
 
-// Сообщения для добавления
 message Song {
   string name = 1;
   string duration = 2;
@@ -38,12 +32,9 @@ message AddRequest {
   string time = 2;
 }
 
-// Удаление
 message SongNameForDelete {
   string name = 1;
 }
 
-
-// Пустой запрос
 message Empty {
 }
