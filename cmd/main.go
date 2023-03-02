@@ -37,16 +37,18 @@ func main() {
 		logger.Fatal().Err(err).Msg("config loading error")
 	}
 
-	// Postgres
 	storage, err := PlaylistStorage.InitStorage(conf.DbUrl)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("storage init error")
 	}
 	defer storage.Conn.Close(context.Background())
 
-	// Инициализация плейлиста
 	pl := playlist.Init()
 	pl.Logger = &logger
+	err = storage.LoadToStorageIfNotExistBaseSongsSet()
+	if err != nil {
+		logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("base songs set loading error")
+	}
 	storageList, err := storage.Load()
 	if err != nil {
 		logger.Fatal().Err(err).Msg("playlist init error")
@@ -54,8 +56,7 @@ func main() {
 	pl.LoadListToPlaylistFromStorage(storageList)
 	logger.Info().Msg("playlist initialized")
 
-	// Инициализация сервера
-	serv := PlaylistServer.New(pl)
+	serv := PlaylistServer.New(pl, storage)
 	serv.Logger = &logger
 
 	wg := &sync.WaitGroup{}

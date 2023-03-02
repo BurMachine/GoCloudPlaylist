@@ -3,6 +3,7 @@ package PlaylistServer
 import (
 	"GoCloudPlaylist/internal/config"
 	"GoCloudPlaylist/internal/playlist"
+	"GoCloudPlaylist/internal/storage"
 	"GoCloudPlaylist/internal/transport/gprcEndpoints"
 	"GoCloudPlaylist/internal/transport/httpHandlers"
 	api "GoCloudPlaylist/pkg/api"
@@ -23,9 +24,9 @@ type PlaylistServer struct {
 	GrpcEndpoints *gprcEndpoints.GrpcEndpoints
 }
 
-func New(pl *playlist.Playlist) *PlaylistServer {
-	return &PlaylistServer{Mux: gorilla.NewRouter(), GrpcEndpoints: &gprcEndpoints.GrpcEndpoints{Pl: pl},
-		HttpHandlers: &httpHandlers.HttpHandlers{Pl: pl}}
+func New(pl *playlist.Playlist, db *storage.PlaylistStorage) *PlaylistServer {
+	return &PlaylistServer{Mux: gorilla.NewRouter(), GrpcEndpoints: &gprcEndpoints.GrpcEndpoints{Pl: pl, Db: db},
+		HttpHandlers: &httpHandlers.HttpHandlers{Pl: pl, Db: db}}
 }
 
 func (s PlaylistServer) Run() {

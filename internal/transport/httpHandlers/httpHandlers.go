@@ -2,6 +2,7 @@ package httpHandlers
 
 import (
 	"GoCloudPlaylist/internal/playlist"
+	"GoCloudPlaylist/internal/storage"
 	"context"
 	"fmt"
 	gorilla "github.com/gorilla/mux"
@@ -14,6 +15,7 @@ import (
 type HttpHandlers struct {
 	Mux *gorilla.Router
 	Pl  *playlist.Playlist
+	Db  *storage.PlaylistStorage
 }
 
 func (h *HttpHandlers) Register() {

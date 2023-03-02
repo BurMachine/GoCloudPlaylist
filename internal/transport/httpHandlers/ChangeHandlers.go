@@ -66,6 +66,13 @@ func (h *HttpHandlers) AddSong(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	err = h.Db.Add(song.Name, song.Duration)
+	if err != nil {
+		h.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("adding to storage error")
+		http.Error(w, errors.New("internal server error").Error(), http.StatusInternalServerError)
+		return
+	}
+
 	h.Pl.Logger.Info().Msg(fmt.Sprintf("[%v] added into playlist", models.Song{Name: song.Name, Duration: dur}))
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
@@ -116,8 +123,14 @@ func (h *HttpHandlers) DeleteSong(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.Pl.Logger.Info().Msg(fmt.Sprintf("[%s] deleted from playlist", songName))
+	err = h.Db.Delete(songName)
+	if err != nil {
+		h.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("deleting from storage error")
+		http.Error(w, errors.New("internal server error").Error(), http.StatusInternalServerError)
+		return
+	}
 
+	h.Pl.Logger.Info().Msg(fmt.Sprintf("[%s] deleted from playlist", songName))
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)

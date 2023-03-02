@@ -41,12 +41,21 @@ func (s *GrpcEndpoints) AddSong(ctx context.Context, req *api.AddRequest) (*api.
 		}
 		res.Playlist = append(res.Playlist, &songRes)
 	}
+	err = s.Db.Add(req.Name, req.Time)
+	if err != nil {
+		s.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("adding to storage error")
+		return nil, status.Error(codes.Internal, err.Error())
+	}
 	s.Pl.Logger.Info().Msg(fmt.Sprintf("[%v] added into playlist", models.Song{Name: req.Name, Duration: time}))
 	return &res, status.Error(codes.OK, "OK")
 }
 
 func (s *GrpcEndpoints) DeleteSong(ctx context.Context, req *api.SongNameForDelete) (*api.PlaylistResponse, error) {
 	var res api.PlaylistResponse
+	if req.Name == "" {
+		s.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(errors.New("empty name field")).Msg("song deleting error")
+		return &res, status.Error(codes.FailedPrecondition, errors.New("empty name field").Error())
+	}
 	err := s.Pl.DeleteSong(req.Name)
 	if err != nil {
 		s.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("song deleting error")
@@ -66,6 +75,11 @@ func (s *GrpcEndpoints) DeleteSong(ctx context.Context, req *api.SongNameForDele
 			Duration: dur,
 		}
 		res.Playlist = append(res.Playlist, &songRes)
+	}
+	err = s.Db.Delete(req.Name)
+	if err != nil {
+		s.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("deleting from storage error")
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 	s.Pl.Logger.Info().Msg(fmt.Sprintf("[%s] deleted from playlist", req.Name))
 	return &res, nil

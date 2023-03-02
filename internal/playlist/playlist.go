@@ -24,10 +24,8 @@ type Playlist struct {
 	PrevChan   chan bool
 	StatusChan chan struct{}
 
-	// Каналы ответа
 	RequestChan chan SongProcessing
 
-	// Graceful shutdown
 	ExitChan chan struct{}
 
 	Logger *zerolog.Logger
