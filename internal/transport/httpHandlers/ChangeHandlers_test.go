@@ -1,16 +1,17 @@
 package httpHandlers
 
 import (
-	"GoCloudPlaylist/internal/models"
-	"GoCloudPlaylist/internal/playlist"
 	"bytes"
 	"encoding/json"
-	gorilla "github.com/gorilla/mux"
-	"github.com/rs/zerolog"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"GoCloudPlaylist/internal/models"
+	"GoCloudPlaylist/internal/playlist"
+	gorilla "github.com/gorilla/mux"
+	"github.com/rs/zerolog"
 )
 
 func TestHttpHandlers_AddSong(t *testing.T) {

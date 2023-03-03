@@ -1,12 +1,12 @@
 package playlist
 
 import (
-	"GoCloudPlaylist/internal/models"
 	"container/list"
-	_ "container/list"
 	"github.com/rs/zerolog"
 	"sync"
 	"time"
+
+	"GoCloudPlaylist/internal/models"
 )
 
 type Playlist struct {

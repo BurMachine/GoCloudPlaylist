@@ -3,9 +3,10 @@ package storage
 import (
 	"context"
 	"fmt"
+	"os"
+
 	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog"
-	"os"
 )
 
 type PlaylistStorage struct {

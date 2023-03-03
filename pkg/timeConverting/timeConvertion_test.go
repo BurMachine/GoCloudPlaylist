@@ -1,10 +1,11 @@
 package timeConverting
 
 import (
-	"GoCloudPlaylist/internal/playlist"
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"GoCloudPlaylist/internal/playlist"
 )
 
 func TestConvertFromSecondsToString(t *testing.T) {

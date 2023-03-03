@@ -1,12 +1,13 @@
 package httpHandlers
 
 import (
-	"GoCloudPlaylist/pkg/timeConverting"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/rs/zerolog"
 	"net/http"
+
+	"GoCloudPlaylist/pkg/timeConverting"
+	"github.com/rs/zerolog"
 )
 
 // @Summary  Start playback

@@ -1,9 +1,10 @@
 package timeConverting
 
 import (
-	"GoCloudPlaylist/internal/playlist"
 	"fmt"
 	"time"
+
+	"GoCloudPlaylist/internal/playlist"
 )
 
 func ConvertFromSongProcToString(songProc playlist.SongProcessing) string {

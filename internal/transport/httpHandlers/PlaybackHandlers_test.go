@@ -1,13 +1,14 @@
 package httpHandlers
 
 import (
-	"GoCloudPlaylist/internal/models"
-	"GoCloudPlaylist/internal/playlist"
-	"github.com/rs/zerolog"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"GoCloudPlaylist/internal/models"
+	"GoCloudPlaylist/internal/playlist"
+	"github.com/rs/zerolog"
 )
 
 func TestHttpHandlers_PlayPauseStatus(t *testing.T) {

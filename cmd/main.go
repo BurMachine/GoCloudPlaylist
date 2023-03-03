@@ -1,10 +1,6 @@
 package main
 
 import (
-	"GoCloudPlaylist/internal/config"
-	"GoCloudPlaylist/internal/playlist"
-	PlaylistServer "GoCloudPlaylist/internal/server"
-	PlaylistStorage "GoCloudPlaylist/internal/storage"
 	"context"
 	"flag"
 	"fmt"
@@ -13,6 +9,11 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+
+	"GoCloudPlaylist/internal/config"
+	"GoCloudPlaylist/internal/playlist"
+	PlaylistServer "GoCloudPlaylist/internal/server"
+	PlaylistStorage "GoCloudPlaylist/internal/storage"
 )
 
 // @title GoCloudPlaylist API
@@ -29,7 +30,7 @@ func main() {
 	flag.Parse()
 
 	logger := zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger()
-	logger.Info().Msg("service star")
+	logger.Info().Msg("service start")
 
 	conf := config.NewConfigStruct()
 	err := conf.LoadConfig(*cfgPath)

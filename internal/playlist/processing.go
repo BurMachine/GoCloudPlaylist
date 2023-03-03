@@ -1,8 +1,9 @@
 package playlist
 
 import (
-	"GoCloudPlaylist/internal/models"
 	"errors"
+
+	"GoCloudPlaylist/internal/models"
 )
 
 type SongProcessing struct {

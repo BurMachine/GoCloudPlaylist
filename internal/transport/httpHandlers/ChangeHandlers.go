@@ -1,14 +1,15 @@
 package httpHandlers
 
 import (
-	"GoCloudPlaylist/internal/models"
-	"GoCloudPlaylist/pkg/timeConverting"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/rs/zerolog"
 	"io"
 	"net/http"
+
+	"GoCloudPlaylist/internal/models"
+	"GoCloudPlaylist/pkg/timeConverting"
+	"github.com/rs/zerolog"
 )
 
 // @Summary Add a new song to the playlist

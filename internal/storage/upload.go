@@ -1,9 +1,10 @@
 package storage
 
 import (
+	"context"
+
 	"GoCloudPlaylist/internal/models"
 	"GoCloudPlaylist/pkg/timeConverting"
-	"context"
 )
 
 var uploadScheme = `INSERT INTO playlist (song, duration) VALUES ($1, $2);`

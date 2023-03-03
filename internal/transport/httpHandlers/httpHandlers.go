@@ -1,15 +1,15 @@
 package httpHandlers
 
 import (
-	"GoCloudPlaylist/internal/playlist"
-	"GoCloudPlaylist/internal/storage"
 	"context"
 	"fmt"
+
+	_ "GoCloudPlaylist/docs"
+	"GoCloudPlaylist/internal/playlist"
+	"GoCloudPlaylist/internal/storage"
 	gorilla "github.com/gorilla/mux"
 	httpSwagger "github.com/swaggo/http-swagger"
 	"net/http"
-
-	_ "GoCloudPlaylist/docs"
 )
 
 type HttpHandlers struct {
