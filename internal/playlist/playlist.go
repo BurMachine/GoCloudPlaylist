@@ -70,13 +70,11 @@ func (pl *Playlist) Run() {
 			continue
 		}
 		if pl.playing {
-			el, ok := pl.current.currentElem.Value.(models.Song)
-			if !ok {
-				println(123)
-			}
+			el, _ := pl.current.currentElem.Value.(models.Song)
 			for i := 0; i < el.Duration; i++ {
 				action := pl.playingProc(i)
 				if action == "next" {
+					pl.playing = true
 					break
 				} else if action == "prev" {
 					break

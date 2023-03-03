@@ -26,8 +26,8 @@ services:
       PGDATA: /data/postgres
     networks:
       - my_network
-    #    volumes:
-    #      - ./postgres:/data/postgres
+    volumes:
+      - ./postgres:/data/postgres
     ports:
       - "5432:5432" # если мы подключаемся внутри контейнера, то можно сразу стучаться на порт 5432 из pgadmin
   pgadmin:
@@ -40,9 +40,9 @@ services:
       - my_network
     ports:
       - 8081:80
-#volumes:
-#  postgres_storage:
-#    name: PlaylistServiceApplicationVolume
+volumes:
+  postgres_storage:
+    name: PlaylistServiceApplicationVolume
 
 networks:
   my_network:

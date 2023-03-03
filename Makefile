@@ -2,19 +2,18 @@
 build:
 	docker compose up -d --remove-orphans
 
-.PHONY = rm_containers
-rm_containers:
-	docker compose down
-	docker rmi gocloudplaylist_api
-	docker rmi dpage/pgadmin4
-
 .PHONY = restart
 restart:
 	docker compose down
 	docker rmi gocloudplaylist_api
 	docker compose up -d
 
-.PHONY = stop
+.PHONY = rm_containers
+rm_containers:
+	docker compose down
+	docker rmi gocloudplaylist_api
+	docker rmi dpage/pgadmin4
+	rm -rf postgres/
 
 .PHONY = gen
 gen:

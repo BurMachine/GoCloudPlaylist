@@ -1,0 +1,66 @@
+###
+
+# curl -X 'GET'
+#'http://localhost:8080/play'
+#-H 'accept: application/json'
+GET http://localhost:8080/play
+accept: application/json
+
+###
+
+# curl -X 'GET'
+#'http://localhost:8080/pause'
+#-H 'accept: application/json'
+GET http://localhost:8080/pause
+accept: application/json
+
+###
+
+# curl -X 'GET'
+#'http://localhost:8080/status'
+#-H 'accept: application/json'
+GET http://localhost:8080/status
+accept: application/json
+
+###
+
+# curl -X 'GET'
+#'http://localhost:8080/next_song'
+#-H 'accept: application/json'
+GET http://localhost:8080/next_song
+accept: application/json
+
+###
+
+# curl -X 'GET'
+#'http://localhost:8080/prev_song'
+#-H 'accept: application/json'
+GET http://localhost:8080/prev_song
+accept: application/json
+
+###
+
+# curl -X 'POST'
+#'http://localhost:8080/add_song'
+#-H 'accept: application/json'
+#-H 'Content-Type: application/json'
+#-d '{
+#"song_duration": "00:00:30",
+#"song_name": "Bohemian Rhapsody - Queen"
+#}'
+POST http://localhost:8080/add_song
+accept: application/json
+Content-Type: application/json
+
+{
+  "song_duration": "00:00:30",
+  "song_name": "Bohemian Rhapsody - Queen"
+}
+
+###
+
+#curl -X 'GET' 'http://localhost:8080/delete_song?name=Bohemian Rhapsody - Queen' -H 'accept: application/json'
+GET http://localhost:8080/delete_song?name=Bohemian Rhapsody - Queen
+accept: application/json
+###
+
