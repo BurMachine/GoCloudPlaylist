@@ -15,7 +15,6 @@ services:
       - "8080:8080"
       - "9090:9090"
     restart: on-failure
-  # внутри микросервиса стучаться до postgres://postgres:5432
   postgres:
     image: postgres:15-alpine
     container_name: postgresContainerForPlaylistService
@@ -29,7 +28,7 @@ services:
     volumes:
       - ./postgres:/data/postgres
     ports:
-      - "5432:5432" # если мы подключаемся внутри контейнера, то можно сразу стучаться на порт 5432 из pgadmin
+      - "5432:5432"
   pgadmin:
     container_name: pgadminContainerForPlaylistService
     image: dpage/pgadmin4
@@ -48,4 +47,3 @@ networks:
   my_network:
     driver: bridge
 
-# контейнеры должны быть в одной сети
