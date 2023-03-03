@@ -4,6 +4,7 @@ import (
 	api "GoCloudPlaylist/pkg/api"
 	"GoCloudPlaylist/pkg/timeConverting"
 	"context"
+	"errors"
 	"fmt"
 	"google.golang.org/grpc/codes"
 	st "google.golang.org/grpc/status"
@@ -45,6 +46,7 @@ func (s *GrpcEndpoints) Next(ctx context.Context, req *api.Empty) (*api.SongProc
 			Status: status,
 		}, st.Errorf(codes.OK, "OK")
 	} else {
+		s.Pl.Logger.Info().Err(errors.New("end of playlist")).Msg("song does not exist")
 		status = "The next song does not exist, so you are at the end of the playlist."
 		return &api.SongProc{}, st.Errorf(codes.NotFound, status)
 	}
@@ -64,6 +66,7 @@ func (s *GrpcEndpoints) Prev(ctx context.Context, req *api.Empty) (*api.SongProc
 			Status: status,
 		}, st.Errorf(codes.OK, "OK")
 	} else {
+		s.Pl.Logger.Info().Err(errors.New("playlist start")).Msg("song does not exist")
 		status = "The previous song does not exist, so you are at the beginning of the playlist."
 		return &api.SongProc{}, st.Errorf(codes.NotFound, status)
 

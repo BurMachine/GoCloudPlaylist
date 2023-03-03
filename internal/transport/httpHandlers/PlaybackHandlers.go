@@ -87,7 +87,7 @@ func (h *HttpHandlers) NextSong(w http.ResponseWriter, r *http.Request) {
 		status = fmt.Sprintf("Switched to next song: %s", songProc.Name)
 	} else {
 		status = "The next song does not exist, so you are at the end of the playlist."
-		h.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(errors.New("next song is nil")).Msg("end of playlist")
+		h.Pl.Logger.Info().Err(errors.New("next song is nil")).Msg("end of playlist")
 		http.Error(w, errors.New(status).Error(), http.StatusBadRequest)
 		return
 	}
@@ -129,7 +129,7 @@ func (h *HttpHandlers) PrevSong(w http.ResponseWriter, r *http.Request) {
 		status = fmt.Sprintf("Switched to previous song: %s", songProc.Name)
 	} else {
 		status = "The previous song does not exist, so you are at the beginning of the playlist."
-		h.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(errors.New("previous song is nil")).Msg("client at beginning of the playlist")
+		h.Pl.Logger.Info().Err(errors.New("previous song is nil")).Msg("client at beginning of the playlist")
 		http.Error(w, errors.New(status).Error(), http.StatusBadRequest)
 		return
 	}

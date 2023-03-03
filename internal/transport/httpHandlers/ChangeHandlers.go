@@ -32,24 +32,23 @@ func (h *HttpHandlers) AddSong(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(body, &song)
 	if err != nil {
 		h.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("body unmarshalling error")
-		//h.Pl.log.Error().Err(err).Msg("body unmarshalling error")
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	if song.Name == "" {
-		h.Pl.Logger.WithLevel(zerolog.WarnLevel).Msg("empty name")
+		h.Pl.Logger.Info().Msg("empty name in adding")
 		http.Error(w, errors.New("empty name").Error(), http.StatusBadRequest)
 		return
 	}
 	dur, err := timeConverting.ParseTimeToSeconds(song.Duration)
 	if err != nil {
-		h.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("time parsing error")
+		h.Pl.Logger.Info().Err(err).Msg("time parsing error")
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	ok := h.Pl.AddNewSong(models.Song{Name: song.Name, Duration: dur})
 	if !ok {
-		h.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(errors.New("new song adding error")).Msg("song already exist")
+		h.Pl.Logger.Info().Err(errors.New("new song adding error")).Msg("song already exist")
 		http.Error(w, errors.New("song adding error, song already exist or incorrect input").Error(), http.StatusBadRequest)
 		return
 	}
@@ -94,14 +93,14 @@ func (h *HttpHandlers) AddSong(w http.ResponseWriter, r *http.Request) {
 func (h *HttpHandlers) DeleteSong(w http.ResponseWriter, r *http.Request) {
 	songName := r.URL.Query().Get("name")
 	if songName == "" {
-		h.Pl.Logger.WithLevel(zerolog.WarnLevel).Msg("method GET query is empty")
+		h.Pl.Logger.Info().Msg("method GET query is empty")
 		http.Error(w, errors.New("empty link").Error(), http.StatusBadRequest)
 		return
 	}
 
 	err := h.Pl.DeleteSong(songName)
 	if err != nil {
-		h.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("song deleting error")
+		h.Pl.Logger.Info().Err(err).Msg("song deleting error")
 		if errors.Is(err, errors.New("can't delete song while playing")) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 		} else {

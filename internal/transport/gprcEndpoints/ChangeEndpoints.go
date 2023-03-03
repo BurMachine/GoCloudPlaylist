@@ -15,16 +15,16 @@ import (
 func (s *GrpcEndpoints) AddSong(ctx context.Context, req *api.AddRequest) (*api.PlaylistResponse, error) {
 	time, err := timeConverting.ParseTimeToSeconds(req.Time)
 	if err != nil {
-		s.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("parse time to seconds error")
+		s.Pl.Logger.Info().Err(err).Msg("parse time to seconds error")
 		return nil, status.Error(codes.FailedPrecondition, "incorrect duration format")
 	}
 	if req.Name == "" {
-		s.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("empty name")
+		s.Pl.Logger.Info().Err(err).Msg("empty name")
 		return nil, status.Error(codes.FailedPrecondition, "empty name")
 	}
 	ok := s.Pl.AddNewSong(models.Song{Name: req.Name, Duration: time})
 	if !ok {
-		s.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(errors.New("new song adding error")).Msg("song already exist")
+		s.Pl.Logger.Info().Err(errors.New("new song adding error")).Msg("song already exist")
 		return nil, status.Error(codes.FailedPrecondition, "new song adding error, song already exist or incorrect input")
 	}
 	list, err := s.Pl.GetList()
@@ -53,12 +53,12 @@ func (s *GrpcEndpoints) AddSong(ctx context.Context, req *api.AddRequest) (*api.
 func (s *GrpcEndpoints) DeleteSong(ctx context.Context, req *api.SongNameForDelete) (*api.PlaylistResponse, error) {
 	var res api.PlaylistResponse
 	if req.Name == "" {
-		s.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(errors.New("empty name field")).Msg("song deleting error")
+		s.Pl.Logger.Info().Err(errors.New("empty name field")).Msg("song deleting error")
 		return &res, status.Error(codes.FailedPrecondition, errors.New("empty name field").Error())
 	}
 	err := s.Pl.DeleteSong(req.Name)
 	if err != nil {
-		s.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("song deleting error")
+		s.Pl.Logger.Info().Err(err).Msg("song deleting error")
 		return &res, status.Error(codes.FailedPrecondition, err.Error())
 	}
 

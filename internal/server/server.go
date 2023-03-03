@@ -1,6 +1,11 @@
 package PlaylistServer
 
 import (
+
+	"net"
+	"net/http"
+	"sync"
+
 	"GoCloudPlaylist/internal/config"
 	"GoCloudPlaylist/internal/playlist"
 	"GoCloudPlaylist/internal/storage"
@@ -11,9 +16,6 @@ import (
 	gorilla "github.com/gorilla/mux"
 	"github.com/rs/zerolog"
 	"google.golang.org/grpc"
-	"net"
-	"net/http"
-	"sync"
 )
 
 type PlaylistServer struct {

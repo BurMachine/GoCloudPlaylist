@@ -5,7 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fb782f30-507e-495d-a4d5-c5315cd814c1" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/server/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/server/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/transport/gprcEndpoints/ChangeEndpoints.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/transport/gprcEndpoints/ChangeEndpoints.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/transport/gprcEndpoints/PlaybackEndpoints.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/transport/gprcEndpoints/PlaybackEndpoints.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/transport/httpHandlers/ChangeHandlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/transport/httpHandlers/ChangeHandlers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/transport/httpHandlers/PlaybackHandlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/transport/httpHandlers/PlaybackHandlers.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
