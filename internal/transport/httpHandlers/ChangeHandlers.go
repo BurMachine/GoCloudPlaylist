@@ -32,6 +32,7 @@ func (h *HttpHandlers) AddSong(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(body, &song)
 	if err != nil {
 		h.Pl.Logger.WithLevel(zerolog.WarnLevel).Err(err).Msg("body unmarshalling error")
+		//h.Pl.log.Error().Err(err).Msg("body unmarshalling error")
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
